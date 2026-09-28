@@ -28,3 +28,10 @@ GitHub Pages에서 `main` 브랜치의 루트(`/`)를 배포 대상으로 설정
 - 상성 데이터: 6세대 이후(현재 9세대) 기준, 특성·날씨·테라스탈 등 예외 규칙 제외
 
 이 사이트는 닌텐도, 게임프리크, 주식회사 포켓몬과 관련이 없는 비공식 팬사이트입니다. 포켓몬 이름과 관련 상표는 각 권리자에게 있습니다.
+
+## 폰트
+
+외부 서버 없이도 폰트가 보이도록 `fonts/` 폴더에 직접 넣어 두었습니다. 두 폰트 모두 SIL Open Font License 1.1로 배포되며, 라이선스 전문은 각 폴더의 `LICENSE`에 있습니다.
+
+- 제목: [Black Han Sans](https://github.com/zesstype/Black-Han-Sans)
+- 본문: [Pretendard](https://github.com/orioncactus/pretendard)
