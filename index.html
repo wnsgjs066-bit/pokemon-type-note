@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>타입 상성 노트</title>
+<meta name="description" content="포켓몬 18개 타입 상성을 이야기로 외우고, 상성 계산기·포켓몬 도감·배틀 시뮬레이션·엔트리 진단까지 한 번에.">
+<meta property="og:title" content="타입 상성 노트">
+<meta property="og:description" content="포켓몬 타입 상성 설명, 계산기, 도감, 배틀 시뮬레이션, 엔트리 진단">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#2E54C6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<style>
+
+:root{
+  --bg:#F1F3F8; --surface:#FFFFFF; --surface-2:#E8ECF4; --ink:#141A29; --muted:#586177; --line:#D8DEEA;
+  --accent:#2E54C6; --accent-soft:#E3E9FB; --accent-ink:#FFFFFF;
+  --x4:#B32E1A; --x2:#E4572E; --x1:var(--surface-2); --xh:#7D8DB4; --xq:#56668F; --x0:#262A35;
+  --x0-ink:#FFFFFF; --shadow:0 1px 0 rgba(20,26,41,.04),0 6px 20px -8px rgba(20,26,41,.18);
+  --display:"Black Han Sans","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --body:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --mono:var(--body);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D111B; --surface:#151B28; --surface-2:#1D2536; --ink:#ECEFF6; --muted:#9AA3B9; --line:#27304A;
+    --accent:#8AA4FF; --accent-soft:#1E2A4D; --accent-ink:#0D111B;
+    --xh:#6A7BA6; --xq:#4B5A82; --x0:#05070C; --shadow:0 1px 0 rgba(0,0,0,.3),0 8px 24px -10px rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D111B; --surface:#151B28; --surface-2:#1D2536; --ink:#ECEFF6; --muted:#9AA3B9; --line:#27304A;
+  --accent:#8AA4FF; --accent-soft:#1E2A4D; --accent-ink:#0D111B;
+  --xh:#6A7BA6; --xq:#4B5A82; --x0:#05070C; --shadow:0 1px 0 rgba(0,0,0,.3),0 8px 24px -10px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65;padding-inline:16px;-webkit-font-smoothing:antialiased;word-break:keep-all;font-variant-numeric:tabular-nums;letter-spacing:-.005em;overflow-wrap:anywhere}
+.wrap{max-width:1120px;margin-inline:auto}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.15;text-wrap:balance;margin:0;letter-spacing:-.005em}
+p{margin:0}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;margin-inline:-16px;padding:10px 16px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:16px}
+.brand{font-family:var(--display);font-size:19px;white-space:nowrap;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink)}
+.brand i{width:22px;height:22px;border-radius:7px;display:inline-grid;place-items:center;background:var(--accent);color:var(--accent-ink)}
+.brand i svg{width:14px;height:14px}
+.links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-left:auto}
+.links::-webkit-scrollbar{display:none}
+.links a{white-space:nowrap;text-decoration:none;color:var(--muted);font-size:14px;font-weight:500;padding:6px 12px;border-radius:999px}
+.links a:hover{color:var(--ink);background:var(--surface-2)}
+
+section{padding-block:56px 8px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:10px}
+.sec-head{display:grid;gap:10px;margin-bottom:28px;max-width:68ch}
+.sec-head h2{font-size:clamp(28px,4.4vw,40px)}
+.sec-head p{color:var(--muted)}
+
+/* hero */
+.hero{padding-block:44px 8px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:40px;align-items:center}
+.hero h1{font-size:clamp(40px,6.6vw,72px)}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .lead{margin-top:18px;font-size:17px;color:var(--muted);max-width:44ch}
+.hero .meta{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px}
+.pill{font-size:13px;font-weight:500;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.pill b{color:var(--ink);font-family:var(--mono)}
+.board{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;padding:10px;border-radius:22px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+
+/* type tile */
+.tile{--c:#999;--f:#fff;position:relative;border:0;cursor:pointer;display:grid;justify-items:center;align-content:center;gap:6px;aspect-ratio:1/1.02;border-radius:14px;padding:8px 4px;color:var(--f);
+  background:radial-gradient(120% 90% at 30% 10%,color-mix(in srgb,var(--c) 70%,#fff) 0%,var(--c) 58%,color-mix(in srgb,var(--c) 86%,#000) 100%);
+  box-shadow:inset 0 -3px 0 color-mix(in srgb,var(--c) 70%,#000),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .18s ease,box-shadow .18s ease}
+.tile svg{width:42%;max-width:40px;height:auto;filter:drop-shadow(0 1px 0 rgba(0,0,0,.18))}
+.tile span{font-family:var(--display);font-size:clamp(13px,1.6vw,17px);line-height:1;text-shadow:0 1px 0 rgba(0,0,0,.18)}
+.tile:hover{transform:translateY(-3px) rotate(-1.5deg)}
+.tile.light span,.tile.light svg{text-shadow:none;filter:none}
+
+/* chip */
+.chip{--c:#999;--f:#fff;display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 11px 4px 5px;background:var(--c);color:var(--f);font-weight:700;font-size:14px;line-height:1.3;white-space:nowrap}
+.chip i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.22)}
+.chip.light i{background:rgba(0,0,0,.08)}
+.chip i svg{width:13px;height:13px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.none{color:var(--muted);font-size:14px}
+
+/* rules */
+.rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;grid-auto-flow:dense}
+.rule{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;gap:10px;align-content:start}
+.rule .x{font-family:var(--mono);font-weight:700;font-size:34px;line-height:1;letter-spacing:-.02em}
+.rule h3{font-size:20px}
+.rule p{color:var(--muted);font-size:15px}
+.rule.wide{grid-column:span 2}
+.rule .say{font-family:var(--mono);font-size:12.5px;color:var(--ink);background:var(--surface-2);padding:6px 10px;border-radius:8px;justify-self:start}
+.eq{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-family:var(--mono);font-weight:700;font-size:15px}
+
+/* stories */
+.story-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;gap:14px;align-content:start}
+.panel h3{font-size:22px}
+.panel > p{color:var(--muted);font-size:15px}
+.tri{width:100%;max-width:360px;height:auto;justify-self:center;overflow:visible}
+.tri .edge{stroke:var(--ink);stroke-width:2.2;fill:none;stroke-linecap:round}
+.tri .head{fill:var(--ink)}
+.tri .lbl{font-family:var(--body);font-weight:700;font-size:13px;fill:var(--ink)}
+.tri .lblbg{fill:var(--surface)}
+.tri .ring{stroke:var(--surface);stroke-width:4}
+.immune{display:grid;gap:8px}
+.imm{display:grid;grid-template-columns:auto auto auto 1fr;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:var(--surface-2)}
+.imm .arrow{font-family:var(--mono);color:var(--muted);font-weight:700}
+.imm small{color:var(--muted);font-size:13.5px;line-height:1.4}
+.asym{display:grid;gap:10px}
+.asym div{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:15px}
+.tag{font-family:var(--mono);font-weight:700;font-size:13px;padding:2px 8px;border-radius:6px}
+
+/* dex */
+.picker{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px}
+.pick{--c:#999;--f:#fff;border:2px solid transparent;border-radius:12px;background:var(--surface);cursor:pointer;display:grid;justify-items:center;gap:3px;padding:8px 2px 6px;transition:transform .15s ease,border-color .15s}
+.pick i{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--c);color:var(--f)}
+.pick i svg{width:18px;height:18px}
+.pick span{font-size:12.5px;font-weight:700;color:var(--muted)}
+.pick:hover{transform:translateY(-2px)}
+.pick[aria-pressed="true"]{border-color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--surface))}
+.pick[aria-pressed="true"] span{color:var(--ink)}
+.dex{margin-top:16px;display:grid;grid-template-columns:260px minmax(0,1fr);gap:14px}
+.dex-card{border-radius:20px;padding:22px;color:var(--f);background:radial-gradient(130% 100% at 20% 0%,color-mix(in srgb,var(--c) 72%,#fff),var(--c) 55%,color-mix(in srgb,var(--c) 80%,#000));display:grid;gap:14px;align-content:start}
+.dex-card svg{width:64px;height:64px}
+.dex-card h3{font-size:40px}
+.dex-card p{font-size:15.5px;line-height:1.6;font-weight:500}
+.dex-card .tagline{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.dex-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.col{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:14px;align-content:start}
+.col h4{margin:0;font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.col h4 small{font-weight:500;color:var(--muted);font-size:13px}
+.row{display:grid;gap:8px}
+.row .k{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--muted);display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+/* calc */
+.calc{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px}
+.calc .inputs{display:grid;gap:16px}
+.calc label.h{font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.calc label.h small{font-weight:500;color:var(--muted);font-size:13px}
+.result{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:24px;display:grid;gap:16px;align-content:start;position:sticky;top:84px}
+.matchup{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.big{font-family:var(--mono);font-weight:800;font-size:clamp(64px,10vw,96px);line-height:.95;letter-spacing:-.04em}
+.msg{font-family:var(--display);font-size:24px}
+.break{display:grid;gap:6px;font-size:14.5px;color:var(--muted)}
+.break div{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.stab{display:flex;align-items:center;gap:10px;font-size:14.5px;padding:10px 12px;border-radius:12px;background:var(--surface-2);cursor:pointer}
+.stab input{width:18px;height:18px;accent-color:var(--accent)}
+.pop{animation:pop .35s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.86)}to{transform:scale(1)}}
+
+/* chart */
+.chart-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px}
+table.chart{border-collapse:separate;border-spacing:3px;font-family:var(--mono);font-size:13px;margin-inline:auto}
+.chart th{font-weight:700;font-family:var(--body)}
+.chart thead th{vertical-align:bottom;padding:0 0 4px}
+.chart thead th .hb{display:grid;justify-items:center;gap:2px;font-size:10.5px;color:var(--muted);font-weight:700}
+.chart .ib{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--c);color:var(--f)}
+.chart .ib svg{width:16px;height:16px}
+.chart tbody th{position:sticky;left:0;background:var(--surface);z-index:1;padding-right:6px}
+.chart tbody th .rb{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.chart td{width:34px;height:32px;text-align:center;border-radius:7px;background:var(--x1);color:transparent;font-weight:700;transition:outline-color .1s}
+.chart td.v2{background:var(--x2);color:#fff}
+.chart td.vh{background:var(--xh);color:#fff}
+.chart td.v0{background:var(--x0);color:var(--x0-ink)}
+.chart td.hl,.chart td.hl-c{outline:2px solid var(--ink);outline-offset:-2px}
+.chart td.cross{outline:3px solid var(--accent);outline-offset:-3px}
+.corner{font-size:10.5px;color:var(--muted);text-align:left;line-height:1.3;font-family:var(--body)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;font-size:14px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend b{width:16px;height:16px;border-radius:4px;display:inline-block}
+
+.chip.sm{font-size:12px;padding:2px 8px 2px 3px;gap:4px}.chip.sm i{width:16px;height:16px}.chip.sm i svg{width:10px;height:10px}
+.chips .tag{margin-left:-2px}
+/* combobox search */
+.combo{position:relative}
+.combo input{width:100%;font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:11px 14px 11px 40px;outline:none;transition:border-color .15s}
+.combo input:focus{border-color:var(--accent)}
+.combo .mag{position:absolute;left:13px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.combo ul{position:absolute;z-index:30;left:0;right:0;top:calc(100% + 6px);margin:0;padding:6px;list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);max-height:340px;overflow-y:auto}
+.combo li{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:pointer;font-size:15px}
+.combo li[aria-selected="true"],.combo li:hover{background:var(--surface-2)}
+.combo li .no,.no{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.combo li .nm{font-weight:700;flex:1;min-width:0}
+.combo li .ts{display:flex;gap:4px}
+.combo .empty{padding:10px;color:var(--muted);font-size:14px}
+.dotc{width:14px;height:14px;border-radius:50%;display:inline-grid;place-items:center;background:var(--c);color:var(--f)}
+.dotc svg{width:9px;height:9px}
+.hint{font-size:13px;color:var(--muted);margin-top:6px}
+
+/* calc multi */
+.moves{display:grid;gap:6px}
+.mv{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:var(--surface-2)}
+.mv.best{background:color-mix(in srgb,var(--x2) 14%,var(--surface));outline:1.5px solid color-mix(in srgb,var(--x2) 60%,transparent)}
+.mv .why{font-size:12.5px;color:var(--muted);font-family:var(--mono)}
+.who{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:700}
+
+/* pokédex */
+.pdx{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:14px;align-items:start}
+.pdx-tools{display:grid;gap:12px;margin-bottom:12px}
+.tfilter{display:flex;flex-wrap:wrap;gap:6px}
+.tf{--c:#999;--f:#fff;border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px 3px 4px;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;cursor:pointer;color:var(--muted)}
+.tf[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:var(--f)}
+.count{font-size:13.5px;color:var(--muted);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.count button{border:0;background:none;color:var(--accent);font-weight:700;cursor:pointer;padding:0}
+.plist{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.pc{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 12px;display:grid;gap:6px;text-align:left;cursor:pointer;transition:transform .15s,border-color .15s}
+.pc:hover{transform:translateY(-2px);border-color:var(--c1)}
+.pc[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.pc .nm{font-weight:700;font-size:15px;line-height:1.3}
+.pc .ts{display:flex;gap:4px}
+.more{justify-self:center;margin-top:12px;border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 18px;font-weight:700;cursor:pointer}
+.pdetail{background:var(--surface);border:1px solid var(--line);border-radius:22px;overflow:hidden;position:sticky;top:84px}
+.phead{padding:20px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;color:var(--f);background:linear-gradient(135deg,var(--c1),var(--c2))}
+.mono{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;background:rgba(255,255,255,.2);box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+.mono svg{width:36px;height:36px}
+.phead h3{font-size:28px}
+.phead .no{color:inherit;opacity:.8}
+.pbody{padding:18px 20px 20px;display:grid;gap:18px}
+.stats{display:grid;gap:6px}
+.st{display:grid;grid-template-columns:44px 34px minmax(0,1fr);align-items:center;gap:8px;font-size:13px}
+.st b{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.st .bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.st .bar i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.st.tot{border-top:1px solid var(--line);padding-top:6px;margin-top:2px}
+.prof{display:grid;gap:10px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:0;border-radius:10px;padding:9px 14px;font-weight:700;font-size:14px;cursor:pointer;background:var(--surface-2);color:var(--ink)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* battle sim */
+.sim{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:start}
+.side{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:16px;display:grid;gap:14px}
+.side .lab{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.fighter{border-radius:16px;padding:16px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;color:var(--f);background:linear-gradient(135deg,var(--c1),var(--c2))}
+.fighter h3{font-size:24px}
+.vs{align-self:center;display:grid;gap:10px;justify-items:center}
+.vs b{font-family:var(--display);font-size:34px;color:var(--muted)}
+.swap{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;width:44px;height:44px;display:grid;place-items:center;cursor:pointer;color:var(--ink)}
+.swap svg{width:18px;height:18px}
+.analysis{margin-top:14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.verdict{grid-column:1/-1;border-radius:20px;padding:20px 22px;display:grid;gap:6px;background:var(--ink);color:var(--bg)}
+.verdict h3{font-size:clamp(24px,3.4vw,32px)}
+.verdict p{opacity:.85;font-size:15px}
+.dir{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:12px;align-content:start}
+.dir h4{margin:0;font-size:16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.atkrow{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:var(--surface-2);font-size:14px}
+.atkrow small{color:var(--muted);font-family:var(--mono);font-size:12px}
+.spd{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14.5px}
+
+/* team */
+:root{--good:#23965A;--warn:#C98A12;--bad:var(--x2)}
+.team-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;margin-bottom:12px}
+.slots{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.slot{min-height:132px;border-radius:18px;padding:12px;display:grid;gap:6px;align-content:start;position:relative;color:var(--f);background:linear-gradient(135deg,var(--c1),var(--c2))}
+.slot .mono{width:40px;height:40px;border-radius:12px}
+.slot .mono svg{width:22px;height:22px}
+.slot b{font-size:15px;line-height:1.3}
+.slot .ts{display:flex;flex-wrap:wrap;gap:4px}
+.slot .rm{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;border:0;cursor:pointer;background:rgba(0,0,0,.18);color:inherit;display:grid;place-items:center;font-size:15px;line-height:1}
+.slot.empty{background:transparent;border:1.5px dashed var(--line);color:var(--muted);place-content:center;justify-items:center;font-size:13.5px;text-align:center}
+.slot.empty span{font-family:var(--display);font-size:22px;color:var(--line)}
+.team-grid{margin-top:14px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;align-items:start}
+.dgrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.dc{border-radius:12px;background:var(--surface-2);padding:8px 4px;display:grid;justify-items:center;gap:4px;font-size:12px;font-weight:700}
+.dc .ib{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--c);color:var(--f)}
+.dc .ib svg{width:15px;height:15px}
+.dc .nums{display:flex;gap:6px}
+.dc .w{color:var(--bad)}.dc .r{color:var(--xh)}.dc .z{color:var(--muted)}
+.dc.danger{background:color-mix(in srgb,var(--bad) 16%,var(--surface));outline:1.5px solid var(--bad)}
+.dc.solid{background:color-mix(in srgb,var(--good) 12%,var(--surface))}
+.diag{display:grid;gap:8px}
+.dg{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;padding:10px 12px;border-radius:12px;background:var(--surface-2);font-size:14.5px;line-height:1.55}
+.dg .sv{font-size:12px;font-weight:800;padding:2px 8px;border-radius:999px;color:#fff;white-space:nowrap;margin-top:1px}
+.sv.bad{background:var(--bad)}.sv.warn{background:var(--warn)}.sv.good{background:var(--good)}.sv.tip{background:var(--accent);color:var(--accent-ink)}
+.dg .chips{margin-top:6px}
+.recs{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px}
+.rec{border:0;cursor:pointer;text-align:left;border-radius:14px;padding:10px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;color:var(--f);background:linear-gradient(135deg,var(--c1),var(--c2));transition:transform .15s}
+.rec:hover:not(:disabled){transform:translateY(-2px)}
+.rec:disabled{opacity:.55;cursor:not-allowed}
+.rec .mono{width:36px;height:36px;border-radius:10px}.rec .mono svg{width:20px;height:20px}
+.rec .rt{display:grid;gap:4px;min-width:0}.rec b{font-size:15px}
+.rec .ts{display:flex;flex-wrap:wrap;gap:4px}
+.rec .rt{grid-template-columns:auto 1fr;align-items:center;column-gap:8px}.rec .rt small{grid-column:1/-1}
+.rec small{font-size:12px;line-height:1.4;opacity:.92;font-weight:600}
+.rec .plus{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.25);font-weight:800}
+#teamNote{margin:-4px 0 10px}
+
+footer{padding-block:56px 40px;color:var(--muted);font-size:14px;display:grid;gap:8px;border-top:1px solid var(--line);margin-top:56px}
+footer a{font-weight:700}
+
+@media (max-width:920px){
+  .hero{grid-template-columns:1fr;gap:28px}
+  .rules{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rule.wide{grid-column:span 2}
+  .story-grid{grid-template-columns:1fr}
+  .dex{grid-template-columns:1fr}
+  .calc{grid-template-columns:1fr}
+  .result{position:static}
+  .pdx{grid-template-columns:1fr}
+  .pdetail{position:static;order:-1}
+  .sim{grid-template-columns:1fr}
+  .vs{grid-auto-flow:column;align-items:center}
+  .analysis{grid-template-columns:1fr}
+  .slots{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .team-grid{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  .plist{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .slots{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .team-top{grid-template-columns:1fr}
+  .dgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .recs{grid-template-columns:1fr}
+  .board{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .picker{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .rules{grid-template-columns:1fr}
+  .rule.wide{grid-column:auto}
+  .dex-body{grid-template-columns:1fr}
+  .imm{grid-template-columns:auto auto auto;}
+  .imm small{grid-column:1/-1}
+  .brand span{display:none}
+}
+</style>
+</head>
+<body>
+<nav class="nav" aria-label="섹션">
+  <div class="wrap">
+    <a class="brand" href="#top"><i id="brandIcon"></i><span>타입 상성 노트</span></a>
+    <div class="links">
+      <a href="#rules">기본 규칙</a>
+      <a href="#stories">이야기로 외우기</a>
+      <a href="#dex">타입 도감</a>
+      <a href="#calc">계산기</a>
+      <a href="#pokedex">포켓몬 도감</a>
+      <a href="#battle">배틀 시뮬레이션</a>
+      <a href="#team">엔트리 피드백</a>
+      <a href="#chart">상성표</a>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap" id="top">
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Pokémon Battle · Type Matchups</p>
+      <h1>18개 타입,<br><em>이야기</em>로 외우는 상성</h1>
+      <p class="lead">표를 통째로 외우는 대신 “불은 풀을 태운다”처럼 장면을 떠올리면 상성이 저절로 따라옵니다. 타입을 눌러 공격과 방어 상성을 바로 확인해 보세요.</p>
+      <div class="meta">
+        <span class="pill"><b>18</b> 타입</span>
+        <span class="pill"><b>324</b> 조합</span>
+        <span class="pill">9세대 기준</span>
+      </div>
+    </div>
+    <div class="board" id="board" aria-label="타입 선택"></div>
+  </header>
+
+  <section id="rules">
+    <div class="sec-head">
+      <p class="eyebrow">01 · 기본 규칙</p>
+      <h2>배율은 네 가지뿐</h2>
+      <p>기술의 타입이 상대 포켓몬의 타입과 만나면 데미지에 배율이 붙습니다. 규칙 자체는 단순하고, 헷갈리는 건 어떤 조합이 어떤 배율인지입니다.</p>
+    </div>
+    <div class="rules">
+      <article class="rule">
+        <div class="x" style="color:var(--x2)">×2</div>
+        <h3>효과가 굉장하다</h3>
+        <p>상대가 약점인 타입으로 때리면 두 배. 배틀의 기본은 이 약점을 찌르는 것입니다.</p>
+        <span class="say">“효과가 굉장했다!”</span>
+      </article>
+      <article class="rule">
+        <div class="x" style="color:var(--xh)">×½</div>
+        <h3>효과가 별로다</h3>
+        <p>상대가 버티는 타입이면 절반. 같은 타입끼리는 대체로 반감입니다.</p>
+        <span class="say">“효과가 별로인 듯하다…”</span>
+      </article>
+      <article class="rule">
+        <div class="x">×0</div>
+        <h3>효과가 없다</h3>
+        <p>아예 안 통하는 조합이 8가지 있습니다. 이건 따로 통째로 외워 두면 편합니다.</p>
+        <span class="say">“효과가 없는 것 같다…”</span>
+      </article>
+      <article class="rule wide">
+        <h3>타입이 두 개면 곱한다</h3>
+        <p>복합 타입은 각 타입의 배율을 곱합니다. 그래서 ×4, ×¼도 나오고, 한쪽이 ×0이면 결과도 무조건 ×0입니다.</p>
+        <div class="eq" id="eqExample"></div>
+      </article>
+      <article class="rule">
+        <div class="x" style="color:var(--accent)">×1.5</div>
+        <h3>자속 보정</h3>
+        <p>포켓몬이 자기 타입과 같은 기술을 쓰면 위력이 1.5배. 불꽃 포켓몬의 불꽃 기술이 더 아픈 이유입니다.</p>
+      </article>
+      <article class="rule wide" style="grid-column:1/-1">
+        <h3>공격과 방어는 따로 본다</h3>
+        <p>A가 B에게 강하다고 해서 B가 A에게 약한 건 아닙니다. 상성표는 한 방향으로만 읽어야 합니다.</p>
+        <div class="asym" id="asym"></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="stories">
+    <div class="sec-head">
+      <p class="eyebrow">02 · 이야기로 외우기</p>
+      <h2>장면을 떠올리면 외울 게 줄어든다</h2>
+      <p>상성은 억지로라도 이유를 붙이면 오래 남습니다. 서로 물고 물리는 삼각 관계부터 잡고, 안 통하는 8가지를 따로 떼어 두면 나머지는 금방 따라옵니다.</p>
+    </div>
+    <div class="story-grid">
+      <article class="panel">
+        <h3>스타팅 삼각형</h3>
+        <p>모든 여정의 시작. 불은 풀을 태우고, 풀은 물을 마시며 자라고, 물은 불을 끕니다.</p>
+        <svg class="tri" id="tri1" viewBox="0 0 320 270" role="img" aria-label="불꽃은 풀에, 풀은 물에, 물은 불꽃에 강하다"></svg>
+      </article>
+      <article class="panel">
+        <h3>몸 · 마음 · 꼼수 삼각형</h3>
+        <p>단련된 격투가는 비겁한 악당을 혼내고, 악당은 꼼수로 초능력자를 속이고, 초능력자는 정신력으로 격투가를 누릅니다.</p>
+        <svg class="tri" id="tri2" viewBox="0 0 320 270" role="img" aria-label="격투는 악에, 악은 에스퍼에, 에스퍼는 격투에 강하다"></svg>
+      </article>
+      <article class="panel">
+        <h3>효과가 없는 8가지</h3>
+        <p>×0은 배틀을 뒤집는 조합이라 가장 먼저 외울 가치가 있습니다.</p>
+        <div class="immune" id="immune"></div>
+      </article>
+      <article class="panel">
+        <h3>한 줄 암기 카드</h3>
+        <p>타입을 누르면 그 타입의 한 줄 이야기와 함께 도감이 열립니다.</p>
+        <div class="immune" id="oneliners"></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="dex">
+    <div class="sec-head">
+      <p class="eyebrow">03 · 타입 도감</p>
+      <h2>타입 하나씩 뜯어보기</h2>
+      <p>공격할 때 어디에 강한지, 맞을 때 무엇을 조심해야 하는지 한 화면에 모았습니다.</p>
+    </div>
+    <div class="picker" id="dexPicker" role="group" aria-label="도감 타입 선택"></div>
+    <div class="dex">
+      <div class="dex-card" id="dexCard"></div>
+      <div class="dex-body">
+        <div class="col">
+          <h4>공격할 때 <small>이 타입 기술을 쓰면</small></h4>
+          <div class="row"><div class="k"><span class="dot" style="background:var(--x2)"></span>×2 효과가 굉장하다</div><div class="chips" id="atk2"></div></div>
+          <div class="row"><div class="k"><span class="dot" style="background:var(--xh)"></span>×½ 효과가 별로다</div><div class="chips" id="atkh"></div></div>
+          <div class="row"><div class="k"><span class="dot" style="background:var(--x0);outline:1px solid var(--line)"></span>×0 효과가 없다</div><div class="chips" id="atk0"></div></div>
+        </div>
+        <div class="col">
+          <h4>방어할 때 <small>이 타입 포켓몬이 맞으면</small></h4>
+          <div class="row"><div class="k"><span class="dot" style="background:var(--x2)"></span>×2 약점</div><div class="chips" id="def2"></div></div>
+          <div class="row"><div class="k"><span class="dot" style="background:var(--xh)"></span>×½ 반감</div><div class="chips" id="defh"></div></div>
+          <div class="row"><div class="k"><span class="dot" style="background:var(--x0);outline:1px solid var(--line)"></span>×0 무효</div><div class="chips" id="def0"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="calc">
+    <div class="sec-head">
+      <p class="eyebrow">04 · 상성 계산기</p>
+      <h2>이 기술, 몇 배로 들어갈까?</h2>
+      <p>기술 타입 하나와 상대를 고르세요. 상대는 포켓몬 이름으로 검색해서 채우거나 타입을 최대 두 개까지 직접 고를 수 있습니다. 예시로 보만다(드래곤·비행)에게 얼음 기술을 쓰는 상황을 띄워 두었습니다.</p>
+    </div>
+    <div class="calc">
+      <div class="inputs">
+        <div>
+          <label class="h">기술 타입 <small>하나 선택</small></label>
+          <div class="picker" id="atkPicker" role="group" aria-label="기술 타입"></div>
+        </div>
+        <div>
+          <label class="h" for="calcSearch">상대 포켓몬 <small>이름·초성·도감 번호로 검색</small></label>
+          <div class="combo" id="calcCombo"></div>
+        </div>
+        <div>
+          <label class="h">상대 타입 직접 고르기 <small>최대 2개 · 다시 누르면 해제</small></label>
+          <div class="picker" id="defPicker" role="group" aria-label="상대 타입"></div>
+        </div>
+      </div>
+      <div class="result" aria-live="polite">
+        <div class="matchup" id="matchup"></div>
+        <div>
+          <div class="big" id="big">×4</div>
+          <div class="msg" id="msg">효과가 굉장했다!</div>
+        </div>
+        <div class="break" id="break"></div>
+        <label class="stab" for="stab"><input type="checkbox" id="stab"> 기술을 쓰는 포켓몬도 같은 타입이다 (자속 ×1.5)</label>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="pokedex">
+    <div class="sec-head">
+      <p class="eyebrow">05 · 포켓몬 도감</p>
+      <h2>이름으로 찾고, 약점까지 한 번에</h2>
+      <p>1025마리와 리전폼·메가진화처럼 타입이 달라지는 폼까지 담았습니다. 한글 이름, 초성(ㄹㅈㅁ), 도감 번호로 검색하고 타입으로 걸러 보세요.</p>
+    </div>
+    <div class="pdx">
+      <div>
+        <div class="pdx-tools">
+          <div class="combo" id="dexSearchWrap"></div>
+          <div class="tfilter" id="tfilter" role="group" aria-label="타입 필터"></div>
+          <div class="count"><span id="pcount"></span><button id="pclear" hidden>필터 초기화</button></div>
+        </div>
+        <div class="plist" id="plist"></div>
+        <div style="display:grid"><button class="more" id="pmore" hidden>더 보기</button></div>
+      </div>
+      <aside class="pdetail" id="pdetail" aria-live="polite"></aside>
+    </div>
+  </section>
+
+  <section id="battle">
+    <div class="sec-head">
+      <p class="eyebrow">06 · 배틀 시뮬레이션</p>
+      <h2>둘이 붙으면 누가 유리할까?</h2>
+      <p>두 포켓몬을 고르면 서로의 자속 기술이 몇 배로 들어가는지, 누가 먼저 움직이는지 비교합니다. 실제 기술 배치와 특성, 도구는 반영하지 않은 타입 기준 시뮬레이션입니다.</p>
+    </div>
+    <div class="sim">
+      <div class="side"><span class="lab">내 포켓몬</span><div class="combo" id="simA"></div><div id="fA"></div></div>
+      <div class="vs"><b>VS</b><button class="swap" id="swap" aria-label="두 포켓몬 자리 바꾸기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h13l-4-4M17 17H4l4 4"/></svg></button></div>
+      <div class="side"><span class="lab">상대 포켓몬</span><div class="combo" id="simB"></div><div id="fB"></div></div>
+    </div>
+    <div class="analysis" id="analysis" aria-live="polite"></div>
+  </section>
+
+  <section id="team">
+    <div class="sec-head">
+      <p class="eyebrow">07 · 엔트리 피드백</p>
+      <h2>내 엔트리, 어디가 구멍일까?</h2>
+      <p>포켓몬을 최대 6마리까지 넣으면 겹치는 약점, 자속 기술로 찌르지 못하는 타입, 스피드 분포를 바로 진단합니다. 구멍을 메워줄 포켓몬도 추천하니 눌러서 바로 넣어 보세요. 처음에는 예시 엔트리가 들어가 있어요.</p>
+    </div>
+    <div class="team-top">
+      <div class="combo" id="teamCombo"></div>
+      <div class="btns"><button class="btn" id="teamSample">예시 엔트리 불러오기</button><button class="btn" id="teamClear">모두 비우기</button></div>
+    </div>
+    <p class="hint" id="teamNote" aria-live="polite" hidden></p>
+    <div class="slots" id="slots"></div>
+    <div class="team-grid">
+      <article class="panel">
+        <h3>방어 상성 한눈에</h3>
+        <p>기술 타입마다 엔트리에서 약점인 포켓몬과 버티는 포켓몬이 몇 마리인지 셌습니다. 붉게 표시된 칸이 엔트리의 구멍입니다.</p>
+        <div class="dgrid" id="dgrid"></div>
+      </article>
+      <article class="panel">
+        <h3>자동 진단</h3>
+        <div class="diag" id="diag"></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="chart">
+    <div class="sec-head">
+      <p class="eyebrow">08 · 전체 상성표</p>
+      <h2>한눈에 보는 18 × 18</h2>
+      <p>세로줄이 공격하는 기술 타입, 가로줄이 맞는 포켓몬 타입입니다. 칸에 마우스를 올리면 줄이 강조되고, 누르면 계산기에 바로 넣어 줍니다.</p>
+    </div>
+    <div class="chart-wrap"><table class="chart" id="chartTable"></table></div>
+    <div class="legend">
+      <span><b style="background:var(--x2)"></b>×2 효과가 굉장하다</span>
+      <span><b style="background:var(--xh)"></b>×½ 효과가 별로다</span>
+      <span><b style="background:var(--x0);outline:1px solid var(--line)"></b>×0 효과가 없다</span>
+      <span><b style="background:var(--x1);outline:1px solid var(--line)"></b>×1 보통</span>
+    </div>
+  </section>
+
+  <footer>
+    <p>설명 방식은 침착맨 플러스의 영상 <a href="https://www.youtube.com/watch?v=8rXSXkT0p7A" target="_blank" rel="noopener">〈포켓몬 교수가 알려주는 상성 특강〉</a>을 참고했습니다.</p>
+    <p>상성 데이터는 6세대 이후(현재 9세대) 기준입니다. 특성, 날씨, 테라스탈 같은 예외 규칙은 포함하지 않았습니다. 타입 아이콘은 이 페이지를 위해 새로 그린 심볼입니다.</p>
+    <p>포켓몬 이름·타입·종족값은 <a href="https://github.com/PokeAPI/pokeapi" target="_blank" rel="noopener">PokeAPI</a> 공개 데이터를 사용했습니다.</p>
+    <p>이 사이트는 닌텐도, 게임프리크, 주식회사 포켓몬과 관련이 없는 비공식 팬사이트입니다. 포켓몬 이름과 관련 상표는 각 권리자에게 있습니다.</p>
+  </footer>
+</main>
+
+<script type="application/json" id="pkdata">[[1,"이상해씨",["grass","poison"],[45,49,49,65,65,45]],[2,"이상해풀",["grass","poison"],[60,62,63,80,80,60]],[3,"이상해꽃",["grass","poison"],[80,82,83,100,100,80]],[4,"파이리",["fire"],[39,52,43,60,50,65]],[5,"리자드",["fire"],[58,64,58,80,65,80]],[6,"리자몽",["fire","flying"],[78,84,78,109,85,100]],[7,"꼬부기",["water"],[44,48,65,50,64,43]],[8,"어니부기",["water"],[59,63,80,65,80,58]],[9,"거북왕",["water"],[79,83,100,85,105,78]],[10,"캐터피",["bug"],[45,30,35,20,20,45]],[11,"단데기",["bug"],[50,20,55,25,25,30]],[12,"버터플",["bug","flying"],[60,45,50,90,80,70]],[13,"뿔충이",["bug","poison"],[40,35,30,20,20,50]],[14,"딱충이",["bug","poison"],[45,25,50,25,25,35]],[15,"독침붕",["bug","poison"],[65,90,40,45,80,75]],[16,"구구",["normal","flying"],[40,45,40,35,35,56]],[17,"피죤",["normal","flying"],[63,60,55,50,50,71]],[18,"피죤투",["normal","flying"],[83,80,75,70,70,101]],[19,"꼬렛",["normal"],[30,56,35,25,35,72]],[20,"레트라",["normal"],[55,81,60,50,70,97]],[21,"깨비참",["normal","flying"],[40,60,30,31,31,70]],[22,"깨비드릴조",["normal","flying"],[65,90,65,61,61,100]],[23,"아보",["poison"],[35,60,44,40,54,55]],[24,"아보크",["poison"],[60,95,69,65,79,80]],[25,"피카츄",["electric"],[35,55,40,50,50,90]],[26,"라이츄",["electric"],[60,90,55,90,80,110]],[27,"모래두지",["ground"],[50,75,85,20,30,40]],[28,"고지",["ground"],[75,100,110,45,55,65]],[29,"니드런♀",["poison"],[55,47,52,40,40,41]],[30,"니드리나",["poison"],[70,62,67,55,55,56]],[31,"니드퀸",["poison","ground"],[90,92,87,75,85,76]],[32,"니드런♂",["poison"],[46,57,40,40,40,50]],[33,"니드리노",["poison"],[61,72,57,55,55,65]],[34,"니드킹",["poison","ground"],[81,102,77,85,75,85]],[35,"삐삐",["fairy"],[70,45,48,60,65,35]],[36,"픽시",["fairy"],[95,70,73,95,90,60]],[37,"식스테일",["fire"],[38,41,40,50,65,65]],[38,"나인테일",["fire"],[73,76,75,81,100,100]],[39,"푸린",["normal","fairy"],[115,45,20,45,25,20]],[40,"푸크린",["normal","fairy"],[140,70,45,85,50,45]],[41,"주뱃",["poison","flying"],[40,45,35,30,40,55]],[42,"골뱃",["poison","flying"],[75,80,70,65,75,90]],[43,"뚜벅쵸",["grass","poison"],[45,50,55,75,65,30]],[44,"냄새꼬",["grass","poison"],[60,65,70,85,75,40]],[45,"라플레시아",["grass","poison"],[75,80,85,110,90,50]],[46,"파라스",["bug","grass"],[35,70,55,45,55,25]],[47,"파라섹트",["bug","grass"],[60,95,80,60,80,30]],[48,"콘팡",["bug","poison"],[60,55,50,40,55,45]],[49,"도나리",["bug","poison"],[70,65,60,90,75,90]],[50,"디그다",["ground"],[10,55,25,35,45,95]],[51,"닥트리오",["ground"],[35,100,50,50,70,120]],[52,"나옹",["normal"],[40,45,35,40,40,90]],[53,"페르시온",["normal"],[65,70,60,65,65,115]],[54,"고라파덕",["water"],[50,52,48,65,50,55]],[55,"골덕",["water"],[80,82,78,95,80,85]],[56,"망키",["fighting"],[40,80,35,35,45,70]],[57,"성원숭",["fighting"],[65,105,60,60,70,95]],[58,"가디",["fire"],[55,70,45,70,50,60]],[59,"윈디",["fire"],[90,110,80,100,80,95]],[60,"발챙이",["water"],[40,50,40,40,40,90]],[61,"슈륙챙이",["water"],[65,65,65,50,50,90]],[62,"강챙이",["water","fighting"],[90,95,95,70,90,70]],[63,"캐이시",["psychic"],[25,20,15,105,55,90]],[64,"윤겔라",["psychic"],[40,35,30,120,70,105]],[65,"후딘",["psychic"],[55,50,45,135,95,120]],[66,"알통몬",["fighting"],[70,80,50,35,35,35]],[67,"근육몬",["fighting"],[80,100,70,50,60,45]],[68,"괴력몬",["fighting"],[90,130,80,65,85,55]],[69,"모다피",["grass","poison"],[50,75,35,70,30,40]],[70,"우츠동",["grass","poison"],[65,90,50,85,45,55]],[71,"우츠보트",["grass","poison"],[80,105,65,100,70,70]],[72,"왕눈해",["water","poison"],[40,40,35,50,100,70]],[73,"독파리",["water","poison"],[80,70,65,80,120,100]],[74,"꼬마돌",["rock","ground"],[40,80,100,30,30,20]],[75,"데구리",["rock","ground"],[55,95,115,45,45,35]],[76,"딱구리",["rock","ground"],[80,120,130,55,65,45]],[77,"포니타",["fire"],[50,85,55,65,65,90]],[78,"날쌩마",["fire"],[65,100,70,80,80,105]],[79,"야돈",["water","psychic"],[90,65,65,40,40,15]],[80,"야도란",["water","psychic"],[95,75,110,100,80,30]],[81,"코일",["electric","steel"],[25,35,70,95,55,45]],[82,"레어코일",["electric","steel"],[50,60,95,120,70,70]],[83,"파오리",["normal","flying"],[52,90,55,58,62,60]],[84,"두두",["normal","flying"],[35,85,45,35,35,75]],[85,"두트리오",["normal","flying"],[60,110,70,60,60,110]],[86,"쥬쥬",["water"],[65,45,55,45,70,45]],[87,"쥬레곤",["water","ice"],[90,70,80,70,95,70]],[88,"질퍽이",["poison"],[80,80,50,40,50,25]],[89,"질뻐기",["poison"],[105,105,75,65,100,50]],[90,"셀러",["water"],[30,65,100,45,25,40]],[91,"파르셀",["water","ice"],[50,95,180,85,45,70]],[92,"고오스",["ghost","poison"],[30,35,30,100,35,80]],[93,"고우스트",["ghost","poison"],[45,50,45,115,55,95]],[94,"팬텀",["ghost","poison"],[60,65,60,130,75,110]],[95,"롱스톤",["rock","ground"],[35,45,160,30,45,70]],[96,"슬리프",["psychic"],[60,48,45,43,90,42]],[97,"슬리퍼",["psychic"],[85,73,70,73,115,67]],[98,"크랩",["water"],[30,105,90,25,25,50]],[99,"킹크랩",["water"],[55,130,115,50,50,75]],[100,"찌리리공",["electric"],[40,30,50,55,55,100]],[101,"붐볼",["electric"],[60,50,70,80,80,150]],[102,"아라리",["grass","psychic"],[60,40,80,60,45,40]],[103,"나시",["grass","psychic"],[95,95,85,125,75,55]],[104,"탕구리",["ground"],[50,50,95,40,50,35]],[105,"텅구리",["ground"],[60,80,110,50,80,45]],[106,"시라소몬",["fighting"],[50,120,53,35,110,87]],[107,"홍수몬",["fighting"],[50,105,79,35,110,76]],[108,"내루미",["normal"],[90,55,75,60,75,30]],[109,"또가스",["poison"],[40,65,95,60,45,35]],[110,"또도가스",["poison"],[65,90,120,85,70,60]],[111,"뿔카노",["ground","rock"],[80,85,95,30,30,25]],[112,"코뿌리",["ground","rock"],[105,130,120,45,45,40]],[113,"럭키",["normal"],[250,5,5,35,105,50]],[114,"덩쿠리",["grass"],[65,55,115,100,40,60]],[115,"캥카",["normal"],[105,95,80,40,80,90]],[116,"쏘드라",["water"],[30,40,70,70,25,60]],[117,"시드라",["water"],[55,65,95,95,45,85]],[118,"콘치",["water"],[45,67,60,35,50,63]],[119,"왕콘치",["water"],[80,92,65,65,80,68]],[120,"별가사리",["water"],[30,45,55,70,55,85]],[121,"아쿠스타",["water","psychic"],[60,75,85,100,85,115]],[122,"마임맨",["psychic","fairy"],[40,45,65,100,120,90]],[123,"스라크",["bug","flying"],[70,110,80,55,80,105]],[124,"루주라",["ice","psychic"],[65,50,35,115,95,95]],[125,"에레브",["electric"],[65,83,57,95,85,105]],[126,"마그마",["fire"],[65,95,57,100,85,93]],[127,"쁘사이저",["bug"],[65,125,100,55,70,85]],[128,"켄타로스",["normal"],[75,100,95,40,70,110]],[129,"잉어킹",["water"],[20,10,55,15,20,80]],[130,"갸라도스",["water","flying"],[95,125,79,60,100,81]],[131,"라프라스",["water","ice"],[130,85,80,85,95,60]],[132,"메타몽",["normal"],[48,48,48,48,48,48]],[133,"이브이",["normal"],[55,55,50,45,65,55]],[134,"샤미드",["water"],[130,65,60,110,95,65]],[135,"쥬피썬더",["electric"],[65,65,60,110,95,130]],[136,"부스터",["fire"],[65,130,60,95,110,65]],[137,"폴리곤",["normal"],[65,60,70,85,75,40]],[138,"암나이트",["rock","water"],[35,40,100,90,55,35]],[139,"암스타",["rock","water"],[70,60,125,115,70,55]],[140,"투구",["rock","water"],[30,80,90,55,45,55]],[141,"투구푸스",["rock","water"],[60,115,105,65,70,80]],[142,"프테라",["rock","flying"],[80,105,65,60,75,130]],[143,"잠만보",["normal"],[160,110,65,65,110,30]],[144,"프리져",["ice","flying"],[90,85,100,95,125,85]],[145,"썬더",["electric","flying"],[90,90,85,125,90,100]],[146,"파이어",["fire","flying"],[90,100,90,125,85,90]],[147,"미뇽",["dragon"],[41,64,45,50,50,50]],[148,"신뇽",["dragon"],[61,84,65,70,70,70]],[149,"망나뇽",["dragon","flying"],[91,134,95,100,100,80]],[150,"뮤츠",["psychic"],[106,110,90,154,90,130]],[151,"뮤",["psychic"],[100,100,100,100,100,100]],[152,"치코리타",["grass"],[45,49,65,49,65,45]],[153,"베이리프",["grass"],[60,62,80,63,80,60]],[154,"메가니움",["grass"],[80,82,100,83,100,80]],[155,"브케인",["fire"],[39,52,43,60,50,65]],[156,"마그케인",["fire"],[58,64,58,80,65,80]],[157,"블레이범",["fire"],[78,84,78,109,85,100]],[158,"리아코",["water"],[50,65,64,44,48,43]],[159,"엘리게이",["water"],[65,80,80,59,63,58]],[160,"장크로다일",["water"],[85,105,100,79,83,78]],[161,"꼬리선",["normal"],[35,46,34,35,45,20]],[162,"다꼬리",["normal"],[85,76,64,45,55,90]],[163,"부우부",["normal","flying"],[60,30,30,36,56,50]],[164,"야부엉",["normal","flying"],[100,50,50,86,96,70]],[165,"레디바",["bug","flying"],[40,20,30,40,80,55]],[166,"레디안",["bug","flying"],[55,35,50,55,110,85]],[167,"페이검",["bug","poison"],[40,60,40,40,40,30]],[168,"아리아도스",["bug","poison"],[70,90,70,60,70,40]],[169,"크로뱃",["poison","flying"],[85,90,80,70,80,130]],[170,"초라기",["water","electric"],[75,38,38,56,56,67]],[171,"랜턴",["water","electric"],[125,58,58,76,76,67]],[172,"피츄",["electric"],[20,40,15,35,35,60]],[173,"삐",["fairy"],[50,25,28,45,55,15]],[174,"푸푸린",["normal","fairy"],[90,30,15,40,20,15]],[175,"토게피",["fairy"],[35,20,65,40,65,20]],[176,"토게틱",["fairy","flying"],[55,40,85,80,105,40]],[177,"네이티",["psychic","flying"],[40,50,45,70,45,70]],[178,"네이티오",["psychic","flying"],[65,75,70,95,70,95]],[179,"메리프",["electric"],[55,40,40,65,45,35]],[180,"보송송",["electric"],[70,55,55,80,60,45]],[181,"전룡",["electric"],[90,75,85,115,90,55]],[182,"아르코",["grass"],[75,80,95,90,100,50]],[183,"마릴",["water","fairy"],[70,20,50,20,50,40]],[184,"마릴리",["water","fairy"],[100,50,80,60,80,50]],[185,"꼬지모",["rock"],[70,100,115,30,65,30]],[186,"왕구리",["water"],[90,75,75,90,100,70]],[187,"통통코",["grass","flying"],[35,35,40,35,55,50]],[188,"두코",["grass","flying"],[55,45,50,45,65,80]],[189,"솜솜코",["grass","flying"],[75,55,70,55,95,110]],[190,"에이팜",["normal"],[55,70,55,40,55,85]],[191,"해너츠",["grass"],[30,30,30,30,30,30]],[192,"해루미",["grass"],[75,75,55,105,85,30]],[193,"왕자리",["bug","flying"],[65,65,45,75,45,95]],[194,"우파",["water","ground"],[55,45,45,25,25,15]],[195,"누오",["water","ground"],[95,85,85,65,65,35]],[196,"에브이",["psychic"],[65,65,60,130,95,110]],[197,"블래키",["dark"],[95,65,110,60,130,65]],[198,"니로우",["dark","flying"],[60,85,42,85,42,91]],[199,"야도킹",["water","psychic"],[95,75,80,100,110,30]],[200,"무우마",["ghost"],[60,60,60,85,85,85]],[201,"안농",["psychic"],[48,72,48,72,48,48]],[202,"마자용",["psychic"],[190,33,58,33,58,33]],[203,"키링키",["normal","psychic"],[70,80,65,90,65,85]],[204,"피콘",["bug"],[50,65,90,35,35,15]],[205,"쏘콘",["bug","steel"],[75,90,140,60,60,40]],[206,"노고치",["normal"],[100,70,70,65,65,45]],[207,"글라이거",["ground","flying"],[65,75,105,35,65,85]],[208,"강철톤",["steel","ground"],[75,85,200,55,65,30]],[209,"블루",["fairy"],[60,80,50,40,40,30]],[210,"그랑블루",["fairy"],[90,120,75,60,60,45]],[211,"침바루",["water","poison"],[65,95,85,55,55,85]],[212,"핫삼",["bug","steel"],[70,130,100,55,80,65]],[213,"단단지",["bug","rock"],[20,10,230,10,230,5]],[214,"헤라크로스",["bug","fighting"],[80,125,75,40,95,85]],[215,"포푸니",["dark","ice"],[55,95,55,35,75,115]],[216,"깜지곰",["normal"],[60,80,50,50,50,40]],[217,"링곰",["normal"],[90,130,75,75,75,55]],[218,"마그마그",["fire"],[40,40,40,70,40,20]],[219,"마그카르고",["fire","rock"],[60,50,120,90,80,30]],[220,"꾸꾸리",["ice","ground"],[50,50,40,30,30,50]],[221,"메꾸리",["ice","ground"],[100,100,80,60,60,50]],[222,"코산호",["water","rock"],[65,55,95,65,95,35]],[223,"총어",["water"],[35,65,35,65,35,65]],[224,"대포무노",["water"],[75,105,75,105,75,45]],[225,"딜리버드",["ice","flying"],[45,55,45,65,45,75]],[226,"만타인",["water","flying"],[85,40,70,80,140,70]],[227,"무장조",["steel","flying"],[65,80,140,40,70,70]],[228,"델빌",["dark","fire"],[45,60,30,80,50,65]],[229,"헬가",["dark","fire"],[75,90,50,110,80,95]],[230,"킹드라",["water","dragon"],[75,95,95,95,95,85]],[231,"코코리",["ground"],[90,60,60,40,40,40]],[232,"코리갑",["ground"],[90,120,120,60,60,50]],[233,"폴리곤2",["normal"],[85,80,90,105,95,60]],[234,"노라키",["normal"],[73,95,62,85,65,85]],[235,"루브도",["normal"],[55,20,35,20,45,75]],[236,"배루키",["fighting"],[35,35,35,35,35,35]],[237,"카포에라",["fighting"],[50,95,95,35,110,70]],[238,"뽀뽀라",["ice","psychic"],[45,30,15,85,65,65]],[239,"에레키드",["electric"],[45,63,37,65,55,95]],[240,"마그비",["fire"],[45,75,37,70,55,83]],[241,"밀탱크",["normal"],[95,80,105,40,70,100]],[242,"해피너스",["normal"],[255,10,10,75,135,55]],[243,"라이코",["electric"],[90,85,75,115,100,115]],[244,"앤테이",["fire"],[115,115,85,90,75,100]],[245,"스이쿤",["water"],[100,75,115,90,115,85]],[246,"애버라스",["rock","ground"],[50,64,50,45,50,41]],[247,"데기라스",["rock","ground"],[70,84,70,65,70,51]],[248,"마기라스",["rock","dark"],[100,134,110,95,100,61]],[249,"루기아",["psychic","flying"],[106,90,130,90,154,110]],[250,"칠색조",["fire","flying"],[106,130,90,110,154,90]],[251,"세레비",["psychic","grass"],[100,100,100,100,100,100]],[252,"나무지기",["grass"],[40,45,35,65,55,70]],[253,"나무돌이",["grass"],[50,65,45,85,65,95]],[254,"나무킹",["grass"],[70,85,65,105,85,120]],[255,"아차모",["fire"],[45,60,40,70,50,45]],[256,"영치코",["fire","fighting"],[60,85,60,85,60,55]],[257,"번치코",["fire","fighting"],[80,120,70,110,70,80]],[258,"물짱이",["water"],[50,70,50,50,50,40]],[259,"늪짱이",["water","ground"],[70,85,70,60,70,50]],[260,"대짱이",["water","ground"],[100,110,90,85,90,60]],[261,"포챠나",["dark"],[35,55,35,30,30,35]],[262,"그라에나",["dark"],[70,90,70,60,60,70]],[263,"지그제구리",["normal"],[38,30,41,30,41,60]],[264,"직구리",["normal"],[78,70,61,50,61,100]],[265,"개무소",["bug"],[45,45,35,20,30,20]],[266,"실쿤",["bug"],[50,35,55,25,25,15]],[267,"뷰티플라이",["bug","flying"],[60,70,50,100,50,65]],[268,"카스쿤",["bug"],[50,35,55,25,25,15]],[269,"독케일",["bug","poison"],[60,50,70,50,90,65]],[270,"연꽃몬",["water","grass"],[40,30,30,40,50,30]],[271,"로토스",["water","grass"],[60,50,50,60,70,50]],[272,"로파파",["water","grass"],[80,70,70,90,100,70]],[273,"도토링",["grass"],[40,40,50,30,30,30]],[274,"잎새코",["grass","dark"],[70,70,40,60,40,60]],[275,"다탱구",["grass","dark"],[90,100,60,90,60,80]],[276,"테일로",["normal","flying"],[40,55,30,30,30,85]],[277,"스왈로",["normal","flying"],[60,85,60,75,50,125]],[278,"갈모매",["water","flying"],[40,30,30,55,30,85]],[279,"패리퍼",["water","flying"],[60,50,100,95,70,65]],[280,"랄토스",["psychic","fairy"],[28,25,25,45,35,40]],[281,"킬리아",["psychic","fairy"],[38,35,35,65,55,50]],[282,"가디안",["psychic","fairy"],[68,65,65,125,115,80]],[283,"비구술",["bug","water"],[40,30,32,50,52,65]],[284,"비나방",["bug","flying"],[70,60,62,100,82,80]],[285,"버섯꼬",["grass"],[60,40,60,40,60,35]],[286,"버섯모",["grass","fighting"],[60,130,80,60,60,70]],[287,"게을로",["normal"],[60,60,60,35,35,30]],[288,"발바로",["normal"],[80,80,80,55,55,90]],[289,"게을킹",["normal"],[150,160,100,95,65,100]],[290,"토중몬",["bug","ground"],[31,45,90,30,30,40]],[291,"아이스크",["bug","flying"],[61,90,45,50,50,160]],[292,"껍질몬",["bug","ghost"],[1,90,45,30,30,40]],[293,"소곤룡",["normal"],[64,51,23,51,23,28]],[294,"노공룡",["normal"],[84,71,43,71,43,48]],[295,"폭음룡",["normal"],[104,91,63,91,73,68]],[296,"마크탕",["fighting"],[72,60,30,20,30,25]],[297,"하리뭉",["fighting"],[144,120,60,40,60,50]],[298,"루리리",["normal","fairy"],[50,20,40,20,40,20]],[299,"코코파스",["rock"],[30,45,135,45,90,30]],[300,"에나비",["normal"],[50,45,45,35,35,50]],[301,"델케티",["normal"],[70,65,65,55,55,90]],[302,"깜까미",["dark","ghost"],[50,75,75,65,65,50]],[303,"입치트",["steel","fairy"],[50,85,85,55,55,50]],[304,"가보리",["steel","rock"],[50,70,100,40,40,30]],[305,"갱도라",["steel","rock"],[60,90,140,50,50,40]],[306,"보스로라",["steel","rock"],[70,110,180,60,60,50]],[307,"요가랑",["fighting","psychic"],[30,40,55,40,55,60]],[308,"요가램",["fighting","psychic"],[60,60,75,60,75,80]],[309,"썬더라이",["electric"],[40,45,40,65,40,65]],[310,"썬더볼트",["electric"],[70,75,60,105,60,105]],[311,"플러시",["electric"],[60,50,40,85,75,95]],[312,"마이농",["electric"],[60,40,50,75,85,95]],[313,"볼비트",["bug"],[65,73,75,47,85,85]],[314,"네오비트",["bug"],[65,47,75,73,85,85]],[315,"로젤리아",["grass","poison"],[50,60,45,100,80,65]],[316,"꼴깍몬",["poison"],[70,43,53,43,53,40]],[317,"꿀꺽몬",["poison"],[100,73,83,73,83,55]],[318,"샤프니아",["water","dark"],[45,90,20,65,20,65]],[319,"샤크니아",["water","dark"],[70,120,40,95,40,95]],[320,"고래왕자",["water"],[130,70,35,70,35,60]],[321,"고래왕",["water"],[170,90,45,90,45,60]],[322,"둔타",["fire","ground"],[60,60,40,65,45,35]],[323,"폭타",["fire","ground"],[70,100,70,105,75,40]],[324,"코터스",["fire"],[70,85,140,85,70,20]],[325,"피그점프",["psychic"],[60,25,35,70,80,60]],[326,"피그킹",["psychic"],[80,45,65,90,110,80]],[327,"얼루기",["normal"],[60,60,60,60,60,60]],[328,"톱치",["ground"],[45,100,45,45,45,10]],[329,"비브라바",["ground","dragon"],[50,70,50,50,50,70]],[330,"플라이곤",["ground","dragon"],[80,100,80,80,80,100]],[331,"선인왕",["grass"],[50,85,40,85,40,35]],[332,"밤선인",["grass","dark"],[70,115,60,115,60,55]],[333,"파비코",["normal","flying"],[45,40,60,40,75,50]],[334,"파비코리",["dragon","flying"],[75,70,90,70,105,80]],[335,"쟝고",["normal"],[73,115,60,60,60,90]],[336,"세비퍼",["poison"],[73,100,60,100,60,65]],[337,"루나톤",["rock","psychic"],[90,55,65,95,85,70]],[338,"솔록",["rock","psychic"],[90,95,85,55,65,70]],[339,"미꾸리",["water","ground"],[50,48,43,46,41,60]],[340,"메깅",["water","ground"],[110,78,73,76,71,60]],[341,"가재군",["water"],[43,80,65,50,35,35]],[342,"가재장군",["water","dark"],[63,120,85,90,55,55]],[343,"오뚝군",["ground","psychic"],[40,40,55,40,70,55]],[344,"점토도리",["ground","psychic"],[60,70,105,70,120,75]],[345,"릴링",["rock","grass"],[66,41,77,61,87,23]],[346,"릴리요",["rock","grass"],[86,81,97,81,107,43]],[347,"아노딥스",["rock","bug"],[45,95,50,40,50,75]],[348,"아말도",["rock","bug"],[75,125,100,70,80,45]],[349,"빈티나",["water"],[20,15,20,10,55,80]],[350,"밀로틱",["water"],[95,60,79,100,125,81]],[351,"캐스퐁",["normal"],[70,70,70,70,70,70]],[352,"켈리몬",["normal"],[60,90,70,60,120,40]],[353,"어둠대신",["ghost"],[44,75,35,63,33,45]],[354,"다크펫",["ghost"],[64,115,65,83,63,65]],[355,"해골몽",["ghost"],[20,40,90,30,90,25]],[356,"미라몽",["ghost"],[40,70,130,60,130,25]],[357,"트로피우스",["grass","flying"],[99,68,83,72,87,51]],[358,"치렁",["psychic"],[75,50,80,95,90,65]],[359,"앱솔",["dark"],[65,130,60,75,60,75]],[360,"마자",["psychic"],[95,23,48,23,48,23]],[361,"눈꼬마",["ice"],[50,50,50,50,50,50]],[362,"얼음귀신",["ice"],[80,80,80,80,80,80]],[363,"대굴레오",["ice","water"],[70,40,50,55,50,25]],[364,"씨레오",["ice","water"],[90,60,70,75,70,45]],[365,"씨카이저",["ice","water"],[110,80,90,95,90,65]],[366,"진주몽",["water"],[35,64,85,74,55,32]],[367,"헌테일",["water"],[55,104,105,94,75,52]],[368,"분홍장이",["water"],[55,84,105,114,75,52]],[369,"시라칸",["water","rock"],[100,90,130,45,65,55]],[370,"사랑동이",["water"],[43,30,55,40,65,97]],[371,"아공이",["dragon"],[45,75,60,40,30,50]],[372,"쉘곤",["dragon"],[65,95,100,60,50,50]],[373,"보만다",["dragon","flying"],[95,135,80,110,80,100]],[374,"메탕",["steel","psychic"],[40,55,80,35,60,30]],[375,"메탕구",["steel","psychic"],[60,75,100,55,80,50]],[376,"메타그로스",["steel","psychic"],[80,135,130,95,90,70]],[377,"레지락",["rock"],[80,100,200,50,100,50]],[378,"레지아이스",["ice"],[80,50,100,100,200,50]],[379,"레지스틸",["steel"],[80,75,150,75,150,50]],[380,"라티아스",["dragon","psychic"],[80,80,90,110,130,110]],[381,"라티오스",["dragon","psychic"],[80,90,80,130,110,110]],[382,"가이오가",["water"],[100,100,90,150,140,90]],[383,"그란돈",["ground"],[100,150,140,100,90,90]],[384,"레쿠쟈",["dragon","flying"],[105,150,90,150,90,95]],[385,"지라치",["steel","psychic"],[100,100,100,100,100,100]],[386,"테오키스",["psychic"],[50,150,50,150,50,150]],[387,"모부기",["grass"],[55,68,64,45,55,31]],[388,"수풀부기",["grass"],[75,89,85,55,65,36]],[389,"토대부기",["grass","ground"],[95,109,105,75,85,56]],[390,"불꽃숭이",["fire"],[44,58,44,58,44,61]],[391,"파이숭이",["fire","fighting"],[64,78,52,78,52,81]],[392,"초염몽",["fire","fighting"],[76,104,71,104,71,108]],[393,"팽도리",["water"],[53,51,53,61,56,40]],[394,"팽태자",["water"],[64,66,68,81,76,50]],[395,"엠페르트",["water","steel"],[84,86,88,111,101,60]],[396,"찌르꼬",["normal","flying"],[40,55,30,30,30,60]],[397,"찌르버드",["normal","flying"],[55,75,50,40,40,80]],[398,"찌르호크",["normal","flying"],[85,120,70,50,60,100]],[399,"비버니",["normal"],[59,45,40,35,40,31]],[400,"비버통",["normal","water"],[79,85,60,55,60,71]],[401,"귀뚤뚜기",["bug"],[37,25,41,25,41,25]],[402,"귀뚤톡크",["bug"],[77,85,51,55,51,65]],[403,"꼬링크",["electric"],[45,65,34,40,34,45]],[404,"럭시오",["electric"],[60,85,49,60,49,60]],[405,"렌트라",["electric"],[80,120,79,95,79,70]],[406,"꼬몽울",["grass","poison"],[40,30,35,50,70,55]],[407,"로즈레이드",["grass","poison"],[60,70,65,125,105,90]],[408,"두개도스",["rock"],[67,125,40,30,30,58]],[409,"램펄드",["rock"],[97,165,60,65,50,58]],[410,"방패톱스",["rock","steel"],[30,42,118,42,88,30]],[411,"바리톱스",["rock","steel"],[60,52,168,47,138,30]],[412,"도롱충이",["bug"],[40,29,45,29,45,36]],[413,"도롱마담",["bug","grass"],[60,59,85,79,105,36]],[414,"나메일",["bug","flying"],[70,94,50,94,50,66]],[415,"세꿀버리",["bug","flying"],[30,30,42,30,42,70]],[416,"비퀸",["bug","flying"],[70,80,102,80,102,40]],[417,"파치리스",["electric"],[60,45,70,45,90,95]],[418,"브이젤",["water"],[55,65,35,60,30,85]],[419,"플로젤",["water"],[85,105,55,85,50,115]],[420,"체리버",["grass"],[45,35,45,62,53,35]],[421,"체리꼬",["grass"],[70,60,70,87,78,85]],[422,"깝질무",["water"],[76,48,48,57,62,34]],[423,"트리토돈",["water","ground"],[111,83,68,92,82,39]],[424,"겟핸보숭",["normal"],[75,100,66,60,66,115]],[425,"흔들풍손",["ghost","flying"],[90,50,34,60,44,70]],[426,"둥실라이드",["ghost","flying"],[150,80,44,90,54,80]],[427,"이어롤",["normal"],[55,66,44,44,56,85]],[428,"이어롭",["normal"],[65,76,84,54,96,105]],[429,"무우마직",["ghost"],[60,60,60,105,105,105]],[430,"돈크로우",["dark","flying"],[100,125,52,105,52,71]],[431,"나옹마",["normal"],[49,55,42,42,37,85]],[432,"몬냥이",["normal"],[71,82,64,64,59,112]],[433,"랑딸랑",["psychic"],[45,30,50,65,50,45]],[434,"스컹뿡",["poison","dark"],[63,63,47,41,41,74]],[435,"스컹탱크",["poison","dark"],[103,93,67,71,61,84]],[436,"동미러",["steel","psychic"],[57,24,86,24,86,23]],[437,"동탁군",["steel","psychic"],[67,89,116,79,116,33]],[438,"꼬지지",["rock"],[50,80,95,10,45,10]],[439,"흉내내",["psychic","fairy"],[20,25,45,70,90,60]],[440,"핑복",["normal"],[100,5,5,15,65,30]],[441,"페라페",["normal","flying"],[76,65,45,92,42,91]],[442,"화강돌",["ghost","dark"],[50,92,108,92,108,35]],[443,"딥상어동",["dragon","ground"],[58,70,45,40,45,42]],[444,"한바이트",["dragon","ground"],[68,90,65,50,55,82]],[445,"한카리아스",["dragon","ground"],[108,130,95,80,85,102]],[446,"먹고자",["normal"],[135,85,40,40,85,5]],[447,"리오르",["fighting"],[40,70,40,35,40,60]],[448,"루카리오",["fighting","steel"],[70,110,70,115,70,90]],[449,"히포포타스",["ground"],[68,72,78,38,42,32]],[450,"하마돈",["ground"],[108,112,118,68,72,47]],[451,"스콜피",["poison","bug"],[40,50,90,30,55,65]],[452,"드래피온",["poison","dark"],[70,90,110,60,75,95]],[453,"삐딱구리",["poison","fighting"],[48,61,40,61,40,50]],[454,"독개굴",["poison","fighting"],[83,106,65,86,65,85]],[455,"무스틈니",["grass"],[74,100,72,90,72,46]],[456,"형광어",["water"],[49,49,56,49,61,66]],[457,"네오라이트",["water"],[69,69,76,69,86,91]],[458,"타만타",["water","flying"],[45,20,50,60,120,50]],[459,"눈쓰개",["grass","ice"],[60,62,50,62,60,40]],[460,"눈설왕",["grass","ice"],[90,92,75,92,85,60]],[461,"포푸니라",["dark","ice"],[70,120,65,45,85,125]],[462,"자포코일",["electric","steel"],[70,70,115,130,90,60]],[463,"내룸벨트",["normal"],[110,85,95,80,95,50]],[464,"거대코뿌리",["ground","rock"],[115,140,130,55,55,40]],[465,"덩쿠림보",["grass"],[100,100,125,110,50,50]],[466,"에레키블",["electric"],[75,123,67,95,85,95]],[467,"마그마번",["fire"],[75,95,67,125,95,83]],[468,"토게키스",["fairy","flying"],[85,50,95,120,115,80]],[469,"메가자리",["bug","flying"],[86,76,86,116,56,95]],[470,"리피아",["grass"],[65,110,130,60,65,95]],[471,"글레이시아",["ice"],[65,60,110,130,95,65]],[472,"글라이온",["ground","flying"],[75,95,125,45,75,95]],[473,"맘모꾸리",["ice","ground"],[110,130,80,70,60,80]],[474,"폴리곤Z",["normal"],[85,80,70,135,75,90]],[475,"엘레이드",["psychic","fighting"],[68,125,65,65,115,80]],[476,"대코파스",["rock","steel"],[60,55,145,75,150,40]],[477,"야느와르몽",["ghost"],[45,100,135,65,135,45]],[478,"눈여아",["ice","ghost"],[70,80,70,80,70,110]],[479,"로토무",["electric","ghost"],[50,50,77,95,77,91]],[480,"유크시",["psychic"],[75,75,130,75,130,95]],[481,"엠라이트",["psychic"],[80,105,105,105,105,80]],[482,"아그놈",["psychic"],[75,125,70,125,70,115]],[483,"디아루가",["steel","dragon"],[100,120,120,150,100,90]],[484,"펄기아",["water","dragon"],[90,120,100,150,120,100]],[485,"히드런",["fire","steel"],[91,90,106,130,106,77]],[486,"레지기가스",["normal"],[110,160,110,80,110,100]],[487,"기라티나",["ghost","dragon"],[150,100,120,100,120,90]],[488,"크레세리아",["psychic"],[120,70,110,75,120,85]],[489,"피오네",["water"],[80,80,80,80,80,80]],[490,"마나피",["water"],[100,100,100,100,100,100]],[491,"다크라이",["dark"],[70,90,90,135,90,125]],[492,"쉐이미",["grass"],[100,100,100,100,100,100]],[493,"아르세우스",["normal"],[120,120,120,120,120,120]],[494,"비크티니",["psychic","fire"],[100,100,100,100,100,100]],[495,"주리비얀",["grass"],[45,45,55,45,55,63]],[496,"샤비",["grass"],[60,60,75,60,75,83]],[497,"샤로다",["grass"],[75,75,95,75,95,113]],[498,"뚜꾸리",["fire"],[65,63,45,45,45,45]],[499,"차오꿀",["fire","fighting"],[90,93,55,70,55,55]],[500,"염무왕",["fire","fighting"],[110,123,65,100,65,65]],[501,"수댕이",["water"],[55,55,45,63,45,45]],[502,"쌍검자비",["water"],[75,75,60,83,60,60]],[503,"대검귀",["water"],[95,100,85,108,70,70]],[504,"보르쥐",["normal"],[45,55,39,35,39,42]],[505,"보르그",["normal"],[60,85,69,60,69,77]],[506,"요테리",["normal"],[45,60,45,25,45,55]],[507,"하데리어",["normal"],[65,80,65,35,65,60]],[508,"바랜드",["normal"],[85,110,90,45,90,80]],[509,"쌔비냥",["dark"],[41,50,37,50,37,66]],[510,"레파르다스",["dark"],[64,88,50,88,50,106]],[511,"야나프",["grass"],[50,53,48,53,48,64]],[512,"야나키",["grass"],[75,98,63,98,63,101]],[513,"바오프",["fire"],[50,53,48,53,48,64]],[514,"바오키",["fire"],[75,98,63,98,63,101]],[515,"앗차프",["water"],[50,53,48,53,48,64]],[516,"앗차키",["water"],[75,98,63,98,63,101]],[517,"몽나",["psychic"],[76,25,45,67,55,24]],[518,"몽얌나",["psychic"],[116,55,85,107,95,29]],[519,"콩둘기",["normal","flying"],[50,55,50,36,30,43]],[520,"유토브",["normal","flying"],[62,77,62,50,42,65]],[521,"켄호로우",["normal","flying"],[80,115,80,65,55,93]],[522,"줄뮤마",["electric"],[45,60,32,50,32,76]],[523,"제브라이카",["electric"],[75,100,63,80,63,116]],[524,"단굴",["rock"],[55,75,85,25,25,15]],[525,"암트르",["rock"],[70,105,105,50,40,20]],[526,"기가이어스",["rock"],[85,135,130,60,80,25]],[527,"또르박쥐",["psychic","flying"],[65,45,43,55,43,72]],[528,"맘박쥐",["psychic","flying"],[67,57,55,77,55,114]],[529,"두더류",["ground"],[60,85,40,30,45,68]],[530,"몰드류",["ground","steel"],[110,135,60,50,65,88]],[531,"다부니",["normal"],[103,60,86,60,86,50]],[532,"으랏차",["fighting"],[75,80,55,25,35,35]],[533,"토쇠골",["fighting"],[85,105,85,40,50,40]],[534,"노보청",["fighting"],[105,140,95,55,65,45]],[535,"동챙이",["water"],[50,50,40,50,40,64]],[536,"두까비",["water","ground"],[75,65,55,65,55,69]],[537,"두빅굴",["water","ground"],[105,95,75,85,75,74]],[538,"던지미",["fighting"],[120,100,85,30,85,45]],[539,"타격귀",["fighting"],[75,125,75,30,75,85]],[540,"두르보",["bug","grass"],[45,53,70,40,60,42]],[541,"두르쿤",["bug","grass"],[55,63,90,50,80,42]],[542,"모아머",["bug","grass"],[75,103,80,70,80,92]],[543,"마디네",["bug","poison"],[30,45,59,30,39,57]],[544,"휠구",["bug","poison"],[40,55,99,40,79,47]],[545,"펜드라",["bug","poison"],[60,100,89,55,69,112]],[546,"소미안",["grass","fairy"],[40,27,60,37,50,66]],[547,"엘풍",["grass","fairy"],[60,67,85,77,75,116]],[548,"치릴리",["grass"],[45,35,50,70,50,30]],[549,"드레디어",["grass"],[70,60,75,110,75,90]],[550,"배쓰나이",["water"],[70,92,65,80,55,98]],[551,"깜눈크",["ground","dark"],[50,72,35,35,35,65]],[552,"악비르",["ground","dark"],[60,82,45,45,45,74]],[553,"악비아르",["ground","dark"],[95,117,80,65,70,92]],[554,"달막화",["fire"],[70,90,45,15,45,50]],[555,"불비달마",["fire"],[105,140,55,30,55,95]],[556,"마라카치",["grass"],[75,86,67,106,67,60]],[557,"돌살이",["bug","rock"],[50,65,85,35,35,55]],[558,"암팰리스",["bug","rock"],[70,105,125,65,75,45]],[559,"곤율랭",["dark","fighting"],[50,75,70,35,70,48]],[560,"곤율거니",["dark","fighting"],[65,90,115,45,115,58]],[561,"심보러",["psychic","flying"],[72,58,80,103,80,97]],[562,"데스마스",["ghost"],[38,30,85,55,65,30]],[563,"데스니칸",["ghost"],[58,50,145,95,105,30]],[564,"프로토가",["water","rock"],[54,78,103,53,45,22]],[565,"늑골라",["water","rock"],[74,108,133,83,65,32]],[566,"아켄",["rock","flying"],[55,112,45,74,45,70]],[567,"아케오스",["rock","flying"],[75,140,65,112,65,110]],[568,"깨봉이",["poison"],[50,50,62,40,62,65]],[569,"더스트나",["poison"],[80,95,82,60,82,75]],[570,"조로아",["dark"],[40,65,40,80,40,65]],[571,"조로아크",["dark"],[60,105,60,120,60,105]],[572,"치라미",["normal"],[55,50,40,40,40,75]],[573,"치라치노",["normal"],[75,95,60,65,60,115]],[574,"고디탱",["psychic"],[45,30,50,55,65,45]],[575,"고디보미",["psychic"],[60,45,70,75,85,55]],[576,"고디모아젤",["psychic"],[70,55,95,95,110,65]],[577,"유니란",["psychic"],[45,30,40,105,50,20]],[578,"듀란",["psychic"],[65,40,50,125,60,30]],[579,"란쿨루스",["psychic"],[110,65,75,125,85,30]],[580,"꼬지보리",["water","flying"],[62,44,50,44,50,55]],[581,"스완나",["water","flying"],[75,87,63,87,63,98]],[582,"바닐프티",["ice"],[36,50,50,65,60,44]],[583,"바닐리치",["ice"],[51,65,65,80,75,59]],[584,"배바닐라",["ice"],[71,95,85,110,95,79]],[585,"사철록",["normal","grass"],[60,60,50,40,50,75]],[586,"바라철록",["normal","grass"],[80,100,70,60,70,95]],[587,"에몽가",["electric","flying"],[55,75,60,75,60,103]],[588,"딱정곤",["bug"],[50,75,45,40,45,60]],[589,"슈바르고",["bug","steel"],[70,135,105,60,105,20]],[590,"깜놀버슬",["grass","poison"],[69,55,45,55,55,15]],[591,"뽀록나",["grass","poison"],[114,85,70,85,80,30]],[592,"탱그릴",["water","ghost"],[55,40,50,65,85,40]],[593,"탱탱겔",["water","ghost"],[100,60,70,85,105,60]],[594,"맘복치",["water"],[165,75,80,40,45,65]],[595,"파쪼옥",["bug","electric"],[50,47,50,57,50,65]],[596,"전툴라",["bug","electric"],[70,77,60,97,60,108]],[597,"철시드",["grass","steel"],[44,50,91,24,86,10]],[598,"너트령",["grass","steel"],[74,94,131,54,116,20]],[599,"기어르",["steel"],[40,55,70,45,60,30]],[600,"기기어르",["steel"],[60,80,95,70,85,50]],[601,"기기기어르",["steel"],[60,100,115,70,85,90]],[602,"저리어",["electric"],[35,55,40,45,40,60]],[603,"저리릴",["electric"],[65,85,70,75,70,40]],[604,"저리더프",["electric"],[85,115,80,105,80,50]],[605,"리그레",["psychic"],[55,55,55,85,55,30]],[606,"벰크",["psychic"],[75,75,75,125,95,40]],[607,"불켜미",["ghost","fire"],[50,30,55,65,55,20]],[608,"램프라",["ghost","fire"],[60,40,60,95,60,55]],[609,"샹델라",["ghost","fire"],[60,55,90,145,90,80]],[610,"터검니",["dragon"],[46,87,60,30,40,57]],[611,"액슨도",["dragon"],[66,117,70,40,50,67]],[612,"액스라이즈",["dragon"],[76,147,90,60,70,97]],[613,"코고미",["ice"],[55,70,40,60,40,40]],[614,"툰베어",["ice"],[95,130,80,70,80,50]],[615,"프리지오",["ice"],[80,50,50,95,135,105]],[616,"쪼마리",["bug"],[50,40,85,40,65,25]],[617,"어지리더",["bug"],[80,70,40,100,60,145]],[618,"메더",["ground","electric"],[109,66,84,81,99,32]],[619,"비조푸",["fighting"],[45,85,50,55,50,65]],[620,"비조도",["fighting"],[65,125,60,95,60,105]],[621,"크리만",["dragon"],[77,120,90,60,90,48]],[622,"골비람",["ground","ghost"],[59,74,50,35,50,35]],[623,"골루그",["ground","ghost"],[89,124,80,55,80,55]],[624,"자망칼",["dark","steel"],[45,85,70,40,40,60]],[625,"절각참",["dark","steel"],[65,125,100,60,70,70]],[626,"버프론",["normal"],[95,110,95,40,95,55]],[627,"수리둥보",["normal","flying"],[70,83,50,37,50,60]],[628,"워글",["normal","flying"],[100,123,75,57,75,80]],[629,"벌차이",["dark","flying"],[70,55,75,45,65,60]],[630,"버랜지나",["dark","flying"],[110,65,105,55,95,80]],[631,"앤티골",["fire"],[85,97,66,105,66,65]],[632,"아이앤트",["bug","steel"],[58,109,112,48,48,109]],[633,"모노두",["dark","dragon"],[52,65,50,45,50,38]],[634,"디헤드",["dark","dragon"],[72,85,70,65,70,58]],[635,"삼삼드래",["dark","dragon"],[92,105,90,125,90,98]],[636,"활화르바",["bug","fire"],[55,85,55,50,55,60]],[637,"불카모스",["bug","fire"],[85,60,65,135,105,100]],[638,"코바르온",["steel","fighting"],[91,90,129,90,72,108]],[639,"테라키온",["rock","fighting"],[91,129,90,72,90,108]],[640,"비리디온",["grass","fighting"],[91,90,72,90,129,108]],[641,"토네로스",["flying"],[79,115,70,125,80,111]],[642,"볼트로스",["electric","flying"],[79,115,70,125,80,111]],[643,"레시라무",["dragon","fire"],[100,120,100,150,120,90]],[644,"제크로무",["dragon","electric"],[100,150,120,120,100,90]],[645,"랜드로스",["ground","flying"],[89,125,90,115,80,101]],[646,"큐레무",["dragon","ice"],[125,130,90,130,90,95]],[647,"케르디오",["water","fighting"],[91,72,90,129,90,108]],[648,"메로엣타",["normal","psychic"],[100,77,77,128,128,90]],[649,"게노세크트",["bug","steel"],[71,120,95,120,95,99]],[650,"도치마론",["grass"],[56,61,65,48,45,38]],[651,"도치보구",["grass"],[61,78,95,56,58,57]],[652,"브리가론",["grass","fighting"],[88,107,122,74,75,64]],[653,"푸호꼬",["fire"],[40,45,40,62,60,60]],[654,"테르나",["fire"],[59,59,58,90,70,73]],[655,"마폭시",["fire","psychic"],[75,69,72,114,100,104]],[656,"개구마르",["water"],[41,56,40,62,44,71]],[657,"개굴반장",["water"],[54,63,52,83,56,97]],[658,"개굴닌자",["water","dark"],[72,95,67,103,71,122]],[659,"파르빗",["normal"],[38,36,38,32,36,57]],[660,"파르토",["normal","ground"],[85,56,77,50,77,78]],[661,"화살꼬빈",["normal","flying"],[45,50,43,40,38,62]],[662,"불화살빈",["fire","flying"],[62,73,55,56,52,84]],[663,"파이어로",["fire","flying"],[78,81,71,74,69,126]],[664,"분이벌레",["bug"],[38,35,40,27,25,35]],[665,"분떠도리",["bug"],[45,22,60,27,30,29]],[666,"비비용",["bug","flying"],[80,52,50,90,50,89]],[667,"레오꼬",["fire","normal"],[62,50,58,73,54,72]],[668,"화염레오",["fire","normal"],[86,68,72,109,66,106]],[669,"플라베베",["fairy"],[44,38,39,61,79,42]],[670,"플라엣테",["fairy"],[54,45,47,75,98,52]],[671,"플라제스",["fairy"],[78,65,68,112,154,75]],[672,"메이클",["grass"],[66,65,48,62,57,52]],[673,"고고트",["grass"],[123,100,62,97,81,68]],[674,"판짱",["fighting"],[67,82,62,46,48,43]],[675,"부란다",["fighting","dark"],[95,124,78,69,71,58]],[676,"트리미앙",["normal"],[75,80,60,65,90,102]],[677,"냐스퍼",["psychic"],[62,48,54,63,60,68]],[678,"냐오닉스",["psychic"],[74,48,76,83,81,104]],[679,"단칼빙",["steel","ghost"],[45,80,100,35,37,28]],[680,"쌍검킬",["steel","ghost"],[59,110,150,45,49,35]],[681,"킬가르도",["steel","ghost"],[60,50,140,50,140,60]],[682,"슈쁘",["fairy"],[78,52,60,63,65,23]],[683,"프레프티르",["fairy"],[101,72,72,99,89,29]],[684,"나룸퍼프",["fairy"],[62,48,66,59,57,49]],[685,"나루림",["fairy"],[82,80,86,85,75,72]],[686,"오케이징",["dark","psychic"],[53,54,53,37,46,45]],[687,"칼라마네로",["dark","psychic"],[86,92,88,68,75,73]],[688,"거북손손",["rock","water"],[42,52,67,39,56,50]],[689,"거북손데스",["rock","water"],[72,105,115,54,86,68]],[690,"수레기",["poison","water"],[50,60,60,60,60,30]],[691,"드래캄",["poison","dragon"],[65,75,90,97,123,44]],[692,"완철포",["water"],[50,53,62,58,63,44]],[693,"블로스터",["water"],[71,73,88,120,89,59]],[694,"목도리키텔",["electric","normal"],[44,38,33,61,43,70]],[695,"일레도리자드",["electric","normal"],[62,55,52,109,94,109]],[696,"티고라스",["rock","dragon"],[58,89,77,45,45,48]],[697,"견고라스",["rock","dragon"],[82,121,119,69,59,71]],[698,"아마루스",["rock","ice"],[77,59,50,67,63,46]],[699,"아마루르가",["rock","ice"],[123,77,72,99,92,58]],[700,"님피아",["fairy"],[95,65,65,110,130,60]],[701,"루차불",["fighting","flying"],[78,92,75,74,63,118]],[702,"데덴네",["electric","fairy"],[67,58,57,81,67,101]],[703,"멜리시",["rock","fairy"],[50,50,150,50,150,50]],[704,"미끄메라",["dragon"],[45,50,35,55,75,40]],[705,"미끄네일",["dragon"],[68,75,53,83,113,60]],[706,"미끄래곤",["dragon"],[90,100,70,110,150,80]],[707,"클레피",["steel","fairy"],[57,80,91,80,87,75]],[708,"나목령",["ghost","grass"],[43,70,48,50,60,38]],[709,"대로트",["ghost","grass"],[85,110,76,65,82,56]],[710,"호바귀",["ghost","grass"],[49,66,70,44,55,51]],[711,"펌킨인",["ghost","grass"],[65,90,122,58,75,84]],[712,"꽁어름",["ice"],[55,69,85,32,35,28]],[713,"크레베이스",["ice"],[95,117,184,44,46,28]],[714,"음뱃",["flying","dragon"],[40,30,35,45,40,55]],[715,"음번",["flying","dragon"],[85,70,80,97,80,123]],[716,"제르네아스",["fairy"],[126,131,95,131,98,99]],[717,"이벨타르",["dark","flying"],[126,131,95,131,98,99]],[718,"지가르데",["dragon","ground"],[108,100,121,81,95,95]],[719,"디안시",["rock","fairy"],[50,100,150,100,150,50]],[720,"후파",["psychic","ghost"],[80,110,60,150,130,70]],[721,"볼케니온",["fire","water"],[80,110,120,130,90,70]],[722,"나몰빼미",["grass","flying"],[68,55,55,50,50,42]],[723,"빼미스로우",["grass","flying"],[78,75,75,70,70,52]],[724,"모크나이퍼",["grass","ghost"],[78,107,75,100,100,70]],[725,"냐오불",["fire"],[45,65,40,60,40,70]],[726,"냐오히트",["fire"],[65,85,50,80,50,90]],[727,"어흥염",["fire","dark"],[95,115,90,80,90,60]],[728,"누리공",["water"],[50,54,54,66,56,40]],[729,"키요공",["water"],[60,69,69,91,81,50]],[730,"누리레느",["water","fairy"],[80,74,74,126,116,60]],[731,"콕코구리",["normal","flying"],[35,75,30,30,30,65]],[732,"크라파",["normal","flying"],[55,85,50,40,50,75]],[733,"왕큰부리",["normal","flying"],[80,120,75,75,75,60]],[734,"영구스",["normal"],[48,70,30,30,30,45]],[735,"형사구스",["normal"],[88,110,60,55,60,45]],[736,"턱지충이",["bug"],[47,62,45,55,45,46]],[737,"전지충이",["bug","electric"],[57,82,95,55,75,36]],[738,"투구뿌논",["bug","electric"],[77,70,90,145,75,43]],[739,"오기지게",["fighting"],[47,82,57,42,47,63]],[740,"모단단게",["fighting","ice"],[97,132,77,62,67,43]],[741,"춤추새",["fire","flying"],[75,70,70,98,70,93]],[742,"에블리",["bug","fairy"],[40,45,40,55,40,84]],[743,"에리본",["bug","fairy"],[60,55,60,95,70,124]],[744,"암멍이",["rock"],[45,65,40,30,40,60]],[745,"루가루암",["rock"],[75,115,65,55,65,112]],[746,"약어리",["water"],[45,20,20,25,25,40]],[747,"시마사리",["poison","water"],[50,53,62,43,52,45]],[748,"더시마사리",["poison","water"],[50,63,152,53,142,35]],[749,"머드나기",["ground"],[70,100,70,45,55,45]],[750,"만마드",["ground"],[100,125,100,55,85,35]],[751,"물거미",["water","bug"],[38,40,52,40,72,27]],[752,"깨비물거미",["water","bug"],[68,70,92,50,132,42]],[753,"짜랑랑",["grass"],[40,55,35,50,35,35]],[754,"라란티스",["grass"],[70,105,90,80,90,45]],[755,"자마슈",["grass","fairy"],[40,35,55,65,75,15]],[756,"마셰이드",["grass","fairy"],[60,45,80,90,100,30]],[757,"야도뇽",["poison","fire"],[48,44,40,71,40,77]],[758,"염뉴트",["poison","fire"],[68,64,60,111,60,117]],[759,"포곰곰",["normal","fighting"],[70,75,50,45,50,50]],[760,"이븐곰",["normal","fighting"],[120,125,80,55,60,60]],[761,"달콤아",["grass"],[42,30,38,30,38,32]],[762,"달무리나",["grass"],[52,40,48,40,48,62]],[763,"달코퀸",["grass"],[72,120,98,50,98,72]],[764,"큐아링",["fairy"],[51,52,90,82,110,100]],[765,"하랑우탄",["normal","psychic"],[90,60,80,90,110,60]],[766,"내던숭이",["fighting"],[100,120,90,40,60,80]],[767,"꼬시레",["bug","water"],[25,35,40,20,30,80]],[768,"갑주무사",["bug","water"],[75,125,140,60,90,40]],[769,"모래꿍",["ghost","ground"],[55,55,80,70,45,15]],[770,"모래성이당",["ghost","ground"],[85,75,110,100,75,35]],[771,"해무기",["water"],[55,60,130,30,130,5]],[772,"타입:널",["normal"],[95,95,95,95,95,59]],[773,"실버디",["normal"],[95,95,95,95,95,95]],[774,"메테노",["rock","flying"],[60,60,100,60,100,60]],[775,"자말라",["normal"],[65,115,65,75,95,65]],[776,"폭거북스",["fire","dragon"],[60,78,135,91,85,36]],[777,"토게데마루",["electric","steel"],[65,98,63,40,73,96]],[778,"따라큐",["ghost","fairy"],[55,90,80,50,105,96]],[779,"치갈기",["water","psychic"],[68,105,70,70,70,92]],[780,"할비롱",["normal","dragon"],[78,60,85,135,91,36]],[781,"타타륜",["ghost","grass"],[70,131,100,86,90,40]],[782,"짜랑꼬",["dragon"],[45,55,65,45,45,45]],[783,"짜랑고우",["dragon","fighting"],[55,75,90,65,70,65]],[784,"짜랑고우거",["dragon","fighting"],[75,110,125,100,105,85]],[785,"카푸꼬꼬꼭",["electric","fairy"],[70,115,85,95,75,130]],[786,"카푸나비나",["psychic","fairy"],[70,85,75,130,115,95]],[787,"카푸브루루",["grass","fairy"],[70,130,115,85,95,75]],[788,"카푸느지느",["water","fairy"],[70,75,115,95,130,85]],[789,"코스모그",["psychic"],[43,29,31,29,31,37]],[790,"코스모움",["psychic"],[43,29,131,29,131,37]],[791,"솔가레오",["psychic","steel"],[137,137,107,113,89,97]],[792,"루나아라",["psychic","ghost"],[137,113,89,137,107,97]],[793,"텅비드",["rock","poison"],[109,53,47,127,131,103]],[794,"매시붕",["bug","fighting"],[107,139,139,53,53,79]],[795,"페로코체",["bug","fighting"],[71,137,37,137,37,151]],[796,"전수목",["electric"],[83,89,71,173,71,83]],[797,"철화구야",["steel","flying"],[97,101,103,107,101,61]],[798,"종이신도",["grass","steel"],[59,181,131,59,31,109]],[799,"악식킹",["dark","dragon"],[223,101,53,97,53,43]],[800,"네크로즈마",["psychic"],[97,107,101,127,89,79]],[801,"마기아나",["steel","fairy"],[80,95,115,130,115,65]],[802,"마샤도",["fighting","ghost"],[90,125,80,90,90,125]],[803,"베베놈",["poison"],[67,73,67,73,67,73]],[804,"아고용",["poison","dragon"],[73,73,73,127,73,121]],[805,"차곡차곡",["rock","steel"],[61,131,211,53,101,13]],[806,"두파팡",["fire","ghost"],[53,127,53,151,79,107]],[807,"제라오라",["electric"],[88,112,75,102,80,143]],[808,"멜탄",["steel"],[46,65,65,55,35,34]],[809,"멜메탈",["steel"],[135,143,143,80,65,34]],[810,"흥나숭",["grass"],[50,65,50,40,40,65]],[811,"채키몽",["grass"],[70,85,70,55,60,80]],[812,"고릴타",["grass"],[100,125,90,60,70,85]],[813,"염버니",["fire"],[50,71,40,40,40,69]],[814,"래비풋",["fire"],[65,86,60,55,60,94]],[815,"에이스번",["fire"],[80,116,75,65,75,119]],[816,"울머기",["water"],[50,40,40,70,40,70]],[817,"누겔레온",["water"],[65,60,55,95,55,90]],[818,"인텔리레온",["water"],[70,85,65,125,65,120]],[819,"탐리스",["normal"],[70,55,55,35,35,25]],[820,"요씽리스",["normal"],[120,95,95,55,75,20]],[821,"파라꼬",["flying"],[38,47,35,33,35,57]],[822,"파크로우",["flying"],[68,67,55,43,55,77]],[823,"아머까오",["flying","steel"],[98,87,105,53,85,67]],[824,"두루지벌레",["bug"],[25,20,20,25,45,45]],[825,"레돔벌레",["bug","psychic"],[50,35,80,50,90,30]],[826,"이올브",["bug","psychic"],[60,45,110,80,120,90]],[827,"훔처우",["dark"],[40,28,28,47,52,50]],[828,"폭슬라이",["dark"],[70,58,58,87,92,90]],[829,"꼬모카",["grass"],[40,40,60,40,60,10]],[830,"백솜모카",["grass"],[60,50,90,80,120,60]],[831,"우르",["normal"],[42,40,55,40,45,48]],[832,"배우르",["normal"],[72,80,100,60,90,88]],[833,"깨물부기",["water"],[50,64,50,38,38,44]],[834,"갈가부기",["water","rock"],[90,115,90,48,68,74]],[835,"멍파치",["electric"],[59,45,50,40,50,26]],[836,"펄스멍",["electric"],[69,90,60,90,60,121]],[837,"탄동",["rock"],[30,40,50,40,50,30]],[838,"탄차곤",["rock","fire"],[80,60,90,60,70,50]],[839,"석탄산",["rock","fire"],[110,80,120,80,90,30]],[840,"과사삭벌레",["grass","dragon"],[40,40,80,40,40,20]],[841,"애프룡",["grass","dragon"],[70,110,80,95,60,70]],[842,"단지래플",["grass","dragon"],[110,85,80,100,80,30]],[843,"모래뱀",["ground"],[52,57,75,35,50,46]],[844,"사다이사",["ground"],[72,107,125,65,70,71]],[845,"윽우지",["flying","water"],[70,85,55,85,95,85]],[846,"찌로꼬치",["water"],[41,63,40,40,30,66]],[847,"꼬치조",["water"],[61,123,60,60,50,136]],[848,"일레즌",["electric","poison"],[40,38,35,54,35,40]],[849,"스트린더",["electric","poison"],[75,98,70,114,70,75]],[850,"태우지네",["fire","bug"],[50,65,45,50,50,45]],[851,"다태우지네",["fire","bug"],[100,115,65,90,90,65]],[852,"때때무노",["fighting"],[50,68,60,50,50,32]],[853,"케오퍼스",["fighting"],[80,118,90,70,80,42]],[854,"데인차",["ghost"],[40,45,45,74,54,50]],[855,"포트데스",["ghost"],[60,65,65,134,114,70]],[856,"몸지브림",["psychic"],[42,30,45,56,53,39]],[857,"손지브림",["psychic"],[57,40,65,86,73,49]],[858,"브리무음",["psychic","fairy"],[57,90,95,136,103,29]],[859,"메롱꿍",["dark","fairy"],[45,45,30,55,40,50]],[860,"쏘겨모",["dark","fairy"],[65,60,45,75,55,70]],[861,"오롱털",["dark","fairy"],[95,120,65,95,75,60]],[862,"가로막구리",["dark","normal"],[93,90,101,60,81,95]],[863,"나이킹",["steel"],[70,110,100,50,60,50]],[864,"산호르곤",["ghost"],[60,95,50,145,130,30]],[865,"창파나이트",["fighting"],[62,135,95,68,82,65]],[866,"마임꽁꽁",["ice","psychic"],[80,85,75,110,100,70]],[867,"데스판",["ground","ghost"],[58,95,145,50,105,30]],[868,"마빌크",["fairy"],[45,40,40,50,61,34]],[869,"마휘핑",["fairy"],[65,60,75,110,121,64]],[870,"대여르",["fighting"],[65,100,100,70,60,75]],[871,"찌르성게",["electric"],[48,101,95,91,85,15]],[872,"누니머기",["ice","bug"],[30,25,35,45,30,20]],[873,"모스노우",["ice","bug"],[70,65,60,125,90,65]],[874,"돌헨진",["rock"],[100,125,135,20,20,70]],[875,"빙큐보",["ice"],[75,80,110,65,90,50]],[876,"에써르",["psychic","normal"],[60,65,55,105,95,95]],[877,"모르페코",["electric","dark"],[58,95,58,70,58,97]],[878,"끼리동",["steel"],[72,80,49,40,49,40]],[879,"대왕끼리동",["steel"],[122,130,69,80,69,30]],[880,"파치래곤",["electric","dragon"],[90,100,90,80,70,75]],[881,"파치르돈",["electric","ice"],[90,100,90,90,80,55]],[882,"어래곤",["water","dragon"],[90,90,100,70,80,75]],[883,"어치르돈",["water","ice"],[90,90,100,80,90,55]],[884,"두랄루돈",["steel","dragon"],[70,95,115,120,50,85]],[885,"드라꼰",["dragon","ghost"],[28,60,30,40,30,82]],[886,"드래런치",["dragon","ghost"],[68,80,50,60,50,102]],[887,"드래펄트",["dragon","ghost"],[88,120,75,100,75,142]],[888,"자시안",["fairy"],[92,120,115,80,115,138]],[889,"자마젠타",["fighting"],[92,120,115,80,115,138]],[890,"무한다이노",["poison","dragon"],[140,85,95,145,95,130]],[891,"치고마",["fighting"],[60,90,60,53,50,72]],[892,"우라오스",["fighting","dark"],[100,130,100,63,60,97]],[893,"자루도",["dark","grass"],[105,120,105,70,95,105]],[894,"레지에레키",["electric"],[80,100,50,100,50,200]],[895,"레지드래고",["dragon"],[200,100,50,100,50,80]],[896,"블리자포스",["ice"],[100,145,130,65,110,30]],[897,"레이스포스",["ghost"],[100,65,60,145,80,130]],[898,"버드렉스",["psychic","grass"],[100,80,80,80,80,80]],[899,"신비록",["normal","psychic"],[103,105,72,105,75,65]],[900,"사마자르",["bug","rock"],[70,135,95,45,70,85]],[901,"다투곰",["ground","normal"],[130,140,105,45,80,50]],[902,"대쓰여너",["water","ghost"],[120,112,65,80,75,78]],[903,"포푸니크",["fighting","poison"],[80,130,60,40,80,120]],[904,"장침바루",["dark","poison"],[85,115,95,65,65,85]],[905,"러브로스",["fairy","flying"],[74,115,70,135,80,106]],[906,"나오하",["grass"],[40,61,54,45,45,65]],[907,"나로테",["grass"],[61,80,63,60,63,83]],[908,"마스카나",["grass","dark"],[76,110,70,81,70,123]],[909,"뜨아거",["fire"],[67,45,59,63,40,36]],[910,"악뜨거",["fire"],[81,55,78,90,58,49]],[911,"라우드본",["fire","ghost"],[104,75,100,110,75,66]],[912,"꾸왁스",["water"],[55,65,45,50,45,50]],[913,"아꾸왁",["water"],[70,85,65,65,60,65]],[914,"웨이니발",["water","fighting"],[85,120,80,85,75,85]],[915,"맛보돈",["normal"],[54,45,40,35,45,35]],[916,"퍼퓨돈",["normal"],[110,100,75,59,80,65]],[917,"타랜툴라",["bug"],[35,41,45,29,40,20]],[918,"트래피더",["bug"],[60,79,92,52,86,35]],[919,"콩알뚜기",["bug"],[33,46,40,21,25,45]],[920,"엑스레그",["bug","dark"],[71,102,78,52,55,92]],[921,"빠모",["electric"],[45,50,20,40,25,60]],[922,"빠모트",["electric","fighting"],[60,75,40,50,40,85]],[923,"빠르모트",["electric","fighting"],[70,115,70,70,60,105]],[924,"두리쥐",["normal"],[50,50,45,40,45,75]],[925,"파밀리쥐",["normal"],[74,75,70,65,75,111]],[926,"쫀도기",["fairy"],[37,55,70,30,55,65]],[927,"바우첼",["fairy"],[57,80,115,50,80,95]],[928,"미니브",["grass","normal"],[41,35,45,58,51,30]],[929,"올리뇨",["grass","normal"],[52,53,60,78,78,33]],[930,"올리르바",["grass","normal"],[78,69,90,125,109,39]],[931,"시비꼬",["normal","flying"],[82,96,51,45,51,92]],[932,"베베솔트",["rock"],[55,55,75,35,35,25]],[933,"스태솔트",["rock"],[60,60,100,35,65,35]],[934,"콜로솔트",["rock"],[100,100,130,45,90,35]],[935,"카르본",["fire"],[40,50,40,50,40,35]],[936,"카디나르마",["fire","psychic"],[85,60,100,125,80,75]],[937,"파라블레이즈",["fire","ghost"],[75,125,80,60,100,85]],[938,"빈나두",["electric"],[61,31,41,59,35,45]],[939,"찌리배리",["electric"],[109,64,91,103,83,45]],[940,"찌리비",["electric","flying"],[40,40,35,55,40,70]],[941,"찌리비크",["electric","flying"],[70,70,60,105,60,125]],[942,"오라티프",["dark"],[60,78,60,40,51,51]],[943,"마피티프",["dark"],[80,120,90,60,70,85]],[944,"땃쭈르",["poison","normal"],[40,65,35,40,35,75]],[945,"태깅구르",["poison","normal"],[63,95,65,80,72,110]],[946,"그푸리",["grass","ghost"],[40,65,30,45,35,60]],[947,"공푸리",["grass","ghost"],[55,115,70,80,70,90]],[948,"들눈해",["ground","grass"],[40,40,35,50,100,70]],[949,"육파리",["ground","grass"],[80,70,65,80,120,100]],[950,"절벼게",["rock"],[70,100,115,35,55,75]],[951,"캡싸이",["grass"],[50,62,40,62,40,50]],[952,"스코빌런",["grass","fire"],[65,108,65,108,65,75]],[953,"구르데",["bug"],[41,50,60,31,58,30]],[954,"베라카스",["bug","psychic"],[75,50,85,115,100,45]],[955,"하느라기",["psychic"],[30,35,30,55,30,75]],[956,"클레스퍼트라",["psychic"],[95,60,60,101,60,105]],[957,"어리짱",["fairy","steel"],[50,45,45,35,64,58]],[958,"벼리짱",["fairy","steel"],[65,55,55,45,82,78]],[959,"두드리짱",["fairy","steel"],[85,75,77,70,105,94]],[960,"바다그다",["water"],[10,55,25,35,25,95]],[961,"바닥트리오",["water"],[35,100,50,50,70,120]],[962,"떨구새",["flying","dark"],[70,103,85,60,85,82]],[963,"맨돌핀",["water"],[70,45,40,45,40,75]],[964,"돌핀맨",["water"],[100,70,72,53,62,100]],[965,"부르롱",["steel","poison"],[45,70,63,30,45,47]],[966,"부르르룸",["steel","poison"],[80,119,90,54,67,90]],[967,"모토마",["dragon","normal"],[70,95,65,85,65,121]],[968,"꿈트렁",["steel"],[70,85,145,60,55,65]],[969,"초롱순",["rock","poison"],[48,35,42,105,60,60]],[970,"킬라플로르",["rock","poison"],[83,55,90,130,81,86]],[971,"망망이",["ghost"],[50,61,60,30,55,34]],[972,"묘두기",["ghost"],[72,101,100,50,97,68]],[973,"꼬이밍고",["flying","fighting"],[82,115,74,75,64,90]],[974,"터벅고래",["ice"],[108,68,45,30,40,43]],[975,"우락고래",["ice"],[170,113,65,45,55,73]],[976,"가비루사",["water","psychic"],[90,102,73,78,65,70]],[977,"어써러셔",["water"],[150,100,115,65,65,35]],[978,"싸리용",["dragon","water"],[68,50,60,120,95,82]],[979,"저승갓숭",["fighting","ghost"],[110,115,80,50,90,90]],[980,"토오",["poison","ground"],[130,75,60,45,100,20]],[981,"키키링",["normal","psychic"],[120,90,70,110,70,60]],[982,"노고고치",["normal"],[125,100,80,85,75,55]],[983,"대도각참",["dark","steel"],[100,135,120,60,85,50]],[984,"위대한엄니",["ground","fighting"],[115,131,131,53,53,87]],[985,"우렁찬꼬리",["fairy","psychic"],[115,65,99,65,115,111]],[986,"사나운버섯",["grass","dark"],[111,127,99,79,99,55]],[987,"날개치는머리",["ghost","fairy"],[55,55,55,135,135,135]],[988,"땅을기는날개",["bug","fighting"],[85,135,79,85,105,81]],[989,"모래털가죽",["electric","ground"],[85,81,97,121,85,101]],[990,"무쇠바퀴",["ground","steel"],[90,112,120,72,70,106]],[991,"무쇠보따리",["ice","water"],[56,80,114,124,60,136]],[992,"무쇠손",["fighting","electric"],[154,140,108,50,68,50]],[993,"무쇠머리",["dark","flying"],[94,80,86,122,80,108]],[994,"무쇠독나방",["fire","poison"],[80,70,60,140,110,110]],[995,"무쇠가시",["rock","electric"],[100,134,110,70,84,72]],[996,"드니차",["dragon","ice"],[65,75,45,35,45,55]],[997,"드니꽁",["dragon","ice"],[90,95,66,45,65,62]],[998,"드닐레이브",["dragon","ice"],[115,145,92,75,86,87]],[999,"모으령",["ghost"],[45,30,70,75,70,10]],[1000,"타부자고",["steel","ghost"],[87,60,95,133,91,84]],[1001,"총지엔",["dark","grass"],[85,85,100,95,135,70]],[1002,"파오젠",["dark","ice"],[80,120,80,90,65,135]],[1003,"딩루",["dark","ground"],[155,110,125,55,80,45]],[1004,"위유이",["dark","fire"],[55,80,80,135,120,100]],[1005,"고동치는달",["dragon","dark"],[105,139,71,55,101,119]],[1006,"무쇠무인",["fairy","fighting"],[74,130,90,120,60,116]],[1007,"코라이돈",["fighting","dragon"],[100,135,115,85,100,135]],[1008,"미라이돈",["electric","dragon"],[100,85,100,135,115,135]],[1009,"굽이치는물결",["water","dragon"],[99,83,91,125,83,109]],[1010,"무쇠잎새",["grass","psychic"],[90,130,88,70,108,104]],[1011,"과미르",["grass","dragon"],[80,80,110,95,80,40]],[1012,"차데스",["grass","ghost"],[40,45,45,74,54,50]],[1013,"그우린차",["grass","ghost"],[71,60,106,121,80,70]],[1014,"조타구",["poison","fighting"],[88,128,115,58,86,80]],[1015,"이야후",["poison","psychic"],[88,75,66,130,90,106]],[1016,"기로치",["poison","fairy"],[88,91,82,70,125,99]],[1017,"오거폰",["grass"],[80,120,84,60,96,110]],[1018,"브리두라스",["steel","dragon"],[90,105,130,125,65,85]],[1019,"과미드라",["grass","dragon"],[106,80,110,120,80,44]],[1020,"꿰뚫는화염",["fire","dragon"],[105,115,121,65,93,91]],[1021,"날뛰는우레",["electric","dragon"],[125,73,91,137,89,75]],[1022,"무쇠암석",["rock","psychic"],[90,120,80,68,108,124]],[1023,"무쇠감투",["steel","psychic"],[90,72,100,122,108,98]],[1024,"테라파고스",["normal"],[90,65,85,65,85,60]],[1025,"복숭악동",["poison","ghost"],[88,88,160,88,88,88]],[413,"도롱마담 (모래땅도롱)",["bug","ground"],[60,79,105,59,85,36]],[413,"도롱마담 (슈레도롱)",["bug","steel"],[60,69,95,69,95,36]],[492,"쉐이미 (스카이폼)",["grass","flying"],[100,103,75,120,75,127]],[479,"로토무 (히트로토무)",["electric","fire"],[50,65,107,105,107,86]],[479,"로토무 (워시로토무)",["electric","water"],[50,65,107,105,107,86]],[479,"로토무 (프로스트로토무)",["electric","ice"],[50,65,107,105,107,86]],[479,"로토무 (스핀로토무)",["electric","flying"],[50,65,107,105,107,86]],[479,"로토무 (커트로토무)",["electric","grass"],[50,65,107,105,107,86]],[351,"캐스퐁 (태양의 모습)",["fire"],[70,70,70,70,70,70]],[351,"캐스퐁 (빗방울의 모습)",["water"],[70,70,70,70,70,70]],[351,"캐스퐁 (설운의 모습)",["ice"],[70,70,70,70,70,70]],[555,"불비달마 (달마모드)",["fire","psychic"],[105,30,105,140,105,55]],[648,"메로엣타 (스텝폼)",["normal","fighting"],[100,128,90,77,77,128]],[3,"이상해꽃 (메가이상해꽃)",["grass","poison"],[80,100,123,122,120,80]],[6,"리자몽 (메가리자몽X)",["fire","dragon"],[78,130,111,130,85,100]],[6,"리자몽 (메가리자몽Y)",["fire","flying"],[78,104,78,159,115,100]],[9,"거북왕 (메가거북왕)",["water"],[79,103,120,135,115,78]],[65,"후딘 (메가후딘)",["psychic"],[55,50,65,175,105,150]],[94,"팬텀 (메가팬텀)",["ghost","poison"],[60,65,80,170,95,130]],[115,"캥카 (메가캥카)",["normal"],[105,125,100,60,100,100]],[127,"쁘사이저 (메가쁘사이저)",["bug","flying"],[65,155,120,65,90,105]],[130,"갸라도스 (메가갸라도스)",["water","dark"],[95,155,109,70,130,81]],[142,"프테라 (메가프테라)",["rock","flying"],[80,135,85,70,95,150]],[150,"뮤츠 (메가뮤츠X)",["psychic","fighting"],[106,190,100,154,100,130]],[150,"뮤츠 (메가뮤츠Y)",["psychic"],[106,150,70,194,120,140]],[181,"전룡 (메가전룡)",["electric","dragon"],[90,95,105,165,110,45]],[212,"핫삼 (메가핫삼)",["bug","steel"],[70,150,140,65,100,75]],[214,"헤라크로스 (메가헤라크로스)",["bug","fighting"],[80,185,115,40,105,75]],[229,"헬가 (메가헬가)",["dark","fire"],[75,90,90,140,90,115]],[248,"마기라스 (메가마기라스)",["rock","dark"],[100,164,150,95,120,71]],[257,"번치코 (메가번치코)",["fire","fighting"],[80,160,80,130,80,100]],[282,"가디안 (메가가디안)",["psychic","fairy"],[68,85,65,165,135,100]],[303,"입치트 (메가입치트)",["steel","fairy"],[50,105,125,55,95,50]],[306,"보스로라 (메가보스로라)",["steel"],[70,140,230,60,80,50]],[308,"요가램 (메가요가램)",["fighting","psychic"],[60,100,85,80,85,100]],[310,"썬더볼트 (메가썬더볼트)",["electric"],[70,75,80,135,80,135]],[354,"다크펫 (메가다크펫)",["ghost"],[64,165,75,93,83,75]],[359,"앱솔 (메가앱솔)",["dark"],[65,150,60,115,60,115]],[445,"한카리아스 (메가한카리아스)",["dragon","ground"],[108,170,115,120,95,92]],[448,"루카리오 (메가루카리오)",["fighting","steel"],[70,145,88,140,70,112]],[460,"눈설왕 (메가눈설왕)",["grass","ice"],[90,132,105,132,105,30]],[380,"라티아스 (메가라티아스)",["dragon","psychic"],[80,100,120,140,150,110]],[381,"라티오스 (메가라티오스)",["dragon","psychic"],[80,130,100,160,120,110]],[260,"대짱이 (메가대짱이)",["water","ground"],[100,150,110,95,110,70]],[254,"나무킹 (메가나무킹)",["grass","dragon"],[70,110,75,145,85,145]],[302,"깜까미 (메가깜까미)",["dark","ghost"],[50,85,125,85,115,20]],[334,"파비코리 (메가파비코리)",["dragon","fairy"],[75,110,110,110,105,80]],[475,"엘레이드 (메가엘레이드)",["psychic","fighting"],[68,165,95,65,115,110]],[531,"다부니 (메가다부니)",["normal","fairy"],[103,60,126,80,126,50]],[319,"샤크니아 (메가샤크니아)",["water","dark"],[70,140,70,110,65,105]],[80,"야도란 (메가야도란)",["water","psychic"],[95,75,180,130,80,30]],[208,"강철톤 (메가강철톤)",["steel","ground"],[75,125,230,55,95,30]],[18,"피죤투 (메가피죤투)",["normal","flying"],[83,80,80,135,80,121]],[362,"얼음귀신 (메가얼음귀신)",["ice"],[80,120,80,120,80,100]],[719,"디안시 (메가디안시)",["rock","fairy"],[50,160,110,160,110,110]],[376,"메타그로스 (메가메타그로스)",["steel","psychic"],[80,145,150,105,110,110]],[383,"그란돈 (원시회귀의 모습)",["ground","fire"],[100,180,160,150,90,90]],[384,"레쿠쟈 (메가레쿠쟈)",["dragon","flying"],[105,180,100,180,100,115]],[720,"후파 (굴레를 벗어난 후파)",["psychic","dark"],[80,160,60,170,130,80]],[323,"폭타 (메가폭타)",["fire","ground"],[70,120,100,145,105,20]],[428,"이어롭 (메가이어롭)",["normal","fighting"],[65,136,94,54,96,135]],[373,"보만다 (메가보만다)",["dragon","flying"],[95,145,130,120,90,120]],[15,"독침붕 (메가독침붕)",["bug","poison"],[65,150,40,15,80,145]],[19,"꼬렛 (알로라의 모습)",["dark","normal"],[30,56,35,25,35,72]],[20,"레트라 (알로라의 모습)",["dark","normal"],[75,71,70,40,80,77]],[26,"라이츄 (알로라의 모습)",["electric","psychic"],[60,85,50,95,85,110]],[27,"모래두지 (알로라의 모습)",["ice","steel"],[50,75,90,10,35,40]],[28,"고지 (알로라의 모습)",["ice","steel"],[75,100,120,25,65,65]],[37,"식스테일 (알로라의 모습)",["ice"],[38,41,40,50,65,65]],[38,"나인테일 (알로라의 모습)",["ice","fairy"],[73,67,75,81,100,109]],[50,"디그다 (알로라의 모습)",["ground","steel"],[10,55,30,35,45,90]],[51,"닥트리오 (알로라의 모습)",["ground","steel"],[35,100,60,50,70,110]],[52,"나옹 (알로라의 모습)",["dark"],[40,35,35,50,40,90]],[53,"페르시온 (알로라의 모습)",["dark"],[65,60,60,75,65,115]],[74,"꼬마돌 (알로라의 모습)",["rock","electric"],[40,80,100,30,30,20]],[75,"데구리 (알로라의 모습)",["rock","electric"],[55,95,115,45,45,35]],[76,"딱구리 (알로라의 모습)",["rock","electric"],[80,120,130,55,65,45]],[88,"질퍽이 (알로라의 모습)",["poison","dark"],[80,80,50,40,50,25]],[89,"질뻐기 (알로라의 모습)",["poison","dark"],[105,105,75,65,100,50]],[103,"나시 (알로라의 모습)",["grass","dragon"],[95,105,85,125,75,45]],[105,"텅구리 (알로라의 모습)",["fire","ghost"],[60,80,110,50,80,45]],[741,"춤추새 (파칙파칙스타일)",["electric","flying"],[75,70,70,98,70,93]],[741,"춤추새 (훌라훌라스타일)",["psychic","flying"],[75,70,70,98,70,93]],[741,"춤추새 (하늘하늘스타일)",["ghost","flying"],[75,70,70,98,70,93]],[800,"네크로즈마 (황혼의 갈기)",["psychic","steel"],[97,157,127,113,109,77]],[800,"네크로즈마 (새벽의 날개)",["psychic","ghost"],[97,113,109,157,127,77]],[800,"네크로즈마 (울트라네크로즈마)",["psychic","dragon"],[97,167,97,167,97,129]],[52,"나옹 (가라르의 모습)",["steel"],[50,65,55,40,40,40]],[77,"포니타 (가라르의 모습)",["psychic"],[50,85,55,65,65,90]],[78,"날쌩마 (가라르의 모습)",["psychic","fairy"],[65,100,70,80,80,105]],[79,"야돈 (가라르의 모습)",["psychic"],[90,65,65,40,40,15]],[80,"야도란 (가라르의 모습)",["poison","psychic"],[95,100,95,100,70,30]],[83,"파오리 (가라르의 모습)",["fighting"],[52,95,55,58,62,55]],[110,"또도가스 (가라르의 모습)",["poison","fairy"],[65,90,120,85,70,60]],[122,"마임맨 (가라르의 모습)",["ice","psychic"],[50,65,65,90,90,100]],[144,"프리져 (가라르의 모습)",["psychic","flying"],[90,85,85,125,100,95]],[145,"썬더 (가라르의 모습)",["fighting","flying"],[90,125,90,85,90,100]],[146,"파이어 (가라르의 모습)",["dark","flying"],[90,85,90,100,125,90]],[199,"야도킹 (가라르의 모습)",["poison","psychic"],[95,65,80,110,110,30]],[222,"코산호 (가라르의 모습)",["ghost"],[60,55,100,65,100,30]],[263,"지그제구리 (가라르의 모습)",["dark","normal"],[38,30,41,30,41,60]],[264,"직구리 (가라르의 모습)",["dark","normal"],[78,70,61,50,61,100]],[554,"달막화 (가라르의 모습)",["ice"],[70,90,45,15,45,50]],[555,"불비달마 (가라르의 모습)",["ice"],[105,140,55,30,55,95]],[555,"불비달마 (달마모드)",["ice","fire"],[105,160,55,30,55,135]],[562,"데스마스 (가라르의 모습)",["ground","ghost"],[38,55,85,30,65,30]],[618,"메더 (가라르의 모습)",["ground","steel"],[109,81,99,66,84,32]],[888,"자시안 (검왕)",["fairy","steel"],[92,150,115,80,115,148]],[889,"자마젠타 (방패왕)",["fighting","steel"],[92,120,140,80,140,128]],[892,"우라오스 (연격의 태세)",["fighting","water"],[100,130,100,63,60,97]],[898,"버드렉스 (백마 탄 모습)",["psychic","ice"],[100,165,150,85,130,50]],[898,"버드렉스 (흑마 탄 모습)",["psychic","ghost"],[100,85,80,165,100,150]],[58,"가디 (히스이의 모습)",["fire","rock"],[60,75,45,65,50,55]],[59,"윈디 (히스이의 모습)",["fire","rock"],[95,115,80,95,80,90]],[100,"찌리리공 (히스이의 모습)",["electric","grass"],[40,30,50,55,55,100]],[101,"붐볼 (히스이의 모습)",["electric","grass"],[60,50,70,80,80,150]],[157,"블레이범 (히스이의 모습)",["fire","ghost"],[73,84,78,119,85,95]],[211,"침바루 (히스이의 모습)",["dark","poison"],[65,95,85,55,55,85]],[215,"포푸니 (히스이의 모습)",["fighting","poison"],[55,95,55,35,75,115]],[503,"대검귀 (히스이의 모습)",["water","dark"],[90,108,80,100,65,85]],[549,"드레디어 (히스이의 모습)",["grass","fighting"],[70,105,75,50,75,105]],[570,"조로아 (히스이의 모습)",["normal","ghost"],[35,60,40,85,40,70]],[571,"조로아크 (히스이의 모습)",["normal","ghost"],[55,100,60,125,60,110]],[628,"워글 (히스이의 모습)",["psychic","flying"],[110,83,70,112,70,65]],[705,"미끄네일 (히스이의 모습)",["steel","dragon"],[58,75,83,83,113,40]],[706,"미끄래곤 (히스이의 모습)",["steel","dragon"],[80,100,100,110,150,60]],[713,"크레베이스 (히스이의 모습)",["ice","rock"],[95,127,184,34,36,38]],[724,"모크나이퍼 (히스이의 모습)",["grass","fighting"],[88,112,80,95,95,60]],[128,"켄타로스 (팔데아 컴뱃종)",["fighting"],[75,110,105,30,70,100]],[128,"켄타로스 (팔데아 블레이즈종)",["fighting","fire"],[75,110,105,30,70,100]],[128,"켄타로스 (팔데아 워터종)",["fighting","water"],[75,110,105,30,70,100]],[194,"우파 (팔데아의 모습)",["poison","ground"],[55,45,45,25,25,15]],[1017,"오거폰 (우물의가면)",["grass","water"],[80,120,84,60,96,110]],[1017,"오거폰 (화덕의가면)",["grass","fire"],[80,120,84,60,96,110]],[1017,"오거폰 (주춧돌의가면)",["grass","rock"],[80,120,84,60,96,110]],[36,"픽시 (메가픽시)",["fairy","flying"],[95,80,93,135,110,70]],[71,"우츠보트 (메가우츠보트)",["grass","poison"],[80,125,85,135,95,70]],[121,"아쿠스타 (메가아쿠스타)",["water","psychic"],[60,100,105,130,105,120]],[149,"망나뇽 (메가망나뇽)",["dragon","flying"],[91,124,115,145,125,100]],[154,"메가니움 (메가메가니움)",["grass","fairy"],[80,92,115,143,115,80]],[160,"장크로다일 (메가장크로다일)",["water","dragon"],[85,160,125,89,93,78]],[227,"무장조 (메가무장조)",["steel","flying"],[65,140,110,40,100,110]],[478,"눈여아 (메가눈여아)",["ice","ghost"],[70,80,70,140,100,120]],[500,"염무왕 (메가염무왕)",["fire","fighting"],[110,148,75,110,110,75]],[530,"몰드류 (메가몰드류)",["ground","steel"],[110,165,100,65,65,103]],[545,"펜드라 (메가펜드라)",["bug","poison"],[60,140,149,75,99,62]],[560,"곤율거니 (메가곤율거니)",["dark","fighting"],[65,130,135,55,135,68]],[604,"저리더프 (메가저리더프)",["electric"],[85,145,80,135,90,80]],[609,"샹델라 (메가샹델라)",["ghost","fire"],[60,75,110,175,110,90]],[652,"브리가론 (메가브리가론)",["grass","fighting"],[88,137,172,74,115,44]],[655,"마폭시 (메가마폭시)",["fire","psychic"],[75,69,72,159,125,134]],[658,"개굴닌자 (메가개굴닌자)",["water","dark"],[72,125,77,133,81,142]],[668,"화염레오 (메가화염레오)",["fire","normal"],[86,88,92,129,86,126]],[670,"플라엣테 (메가플라엣테)",["fairy"],[74,85,87,155,148,102]],[687,"칼라마네로 (메가칼라마네로)",["dark","psychic"],[86,102,88,98,120,88]],[689,"거북손데스 (메가거북손데스)",["rock","fighting"],[72,140,130,64,106,88]],[691,"드래캄 (메가드래캄)",["poison","dragon"],[65,85,105,132,163,44]],[701,"루차불 (메가루차불)",["fighting","flying"],[78,137,100,74,93,118]],[718,"지가르데 (메가지가르데)",["dragon","ground"],[216,70,91,216,85,100]],[780,"할비롱 (메가할비롱)",["normal","dragon"],[78,85,110,160,116,36]],[870,"대여르 (메가대여르)",["fighting"],[65,135,135,70,65,100]],[26,"라이츄 (메가라이츄X)",["electric"],[60,135,95,90,95,110]],[26,"라이츄 (메가라이츄Y)",["electric"],[60,100,55,160,80,130]],[358,"치렁 (메가치렁)",["psychic","steel"],[75,50,110,135,120,65]],[359,"앱솔 (메가앱솔Z)",["dark","ghost"],[65,154,60,75,60,151]],[398,"찌르호크 (메가찌르호크)",["fighting","flying"],[85,140,100,60,90,110]],[445,"한카리아스 (메가한카리아스Z)",["dragon"],[108,130,85,141,85,151]],[448,"루카리오 (메가루카리오Z)",["fighting","steel"],[70,100,70,164,70,151]],[485,"히드런 (메가히드런)",["fire","steel"],[91,120,106,175,141,67]],[491,"다크라이 (메가다크라이)",["dark"],[70,120,130,165,130,85]],[623,"골루그 (메가골루그)",["ground","ghost"],[89,159,105,70,105,55]],[678,"냐오닉스 (메가냐오닉스 수컷)",["psychic"],[74,48,76,143,101,124]],[740,"모단단게 (메가모단단게)",["fighting","ice"],[97,157,122,62,107,33]],[768,"갑주무사 (메가갑주무사)",["bug","steel"],[75,150,175,70,120,40]],[801,"마기아나 (메가마기아나)",["steel","fairy"],[80,125,115,170,115,95]],[807,"제라오라 (메가제라오라)",["electric"],[88,157,75,147,80,153]],[952,"스코빌런 (메가스코빌런)",["grass","fire"],[65,138,85,138,85,75]],[970,"킬라플로르 (메가킬라플로르)",["rock","poison"],[83,90,105,150,96,101]],[978,"싸리용 (메가싸리용)",["dragon","water"],[68,65,90,135,125,92]],[998,"드닐레이브 (메가드닐레이브)",["dragon","ice"],[115,175,117,105,101,87]],[678,"냐오닉스 (메가냐오닉스 암컷)",["psychic"],[74,48,76,143,101,124]]]</script>
+<script>
+(function(){
+const T=[
+ {k:'normal',n:'노말',c:'#9A9B99',l:1},
+ {k:'fire',n:'불꽃',c:'#E6693A'},
+ {k:'water',n:'물',c:'#4F86CC'},
+ {k:'grass',n:'풀',c:'#5FA843'},
+ {k:'electric',n:'전기',c:'#F7B924',l:1},
+ {k:'ice',n:'얼음',c:'#62C6EA',l:1},
+ {k:'fighting',n:'격투',c:'#DE9437'},
+ {k:'poison',n:'독',c:'#7350A0'},
+ {k:'ground',n:'땅',c:'#9B7441'},
+ {k:'flying',n:'비행',c:'#96BCE8',l:1},
+ {k:'psychic',n:'에스퍼',c:'#E0667A'},
+ {k:'bug',n:'벌레',c:'#9CA23B'},
+ {k:'rock',n:'바위',c:'#BDB584',l:1},
+ {k:'ghost',n:'고스트',c:'#6A4A77'},
+ {k:'dragon',n:'드래곤',c:'#4E5DB0'},
+ {k:'dark',n:'악',c:'#4B4847'},
+ {k:'steel',n:'강철',c:'#62A6C7'},
+ {k:'fairy',n:'페어리',c:'#E0A7D6',l:1}
+];
+const DARKFG='#1B2030';
+T.forEach(t=>{t.f=t.l?DARKFG:'#fff'});
+// normal gray reads better with white text
+T[0].l=0;T[0].f='#fff';
+const byK=Object.fromEntries(T.map(t=>[t.k,t]));
+
+const E={
+ normal:{2:[],h:['rock','steel'],0:['ghost']},
+ fire:{2:['grass','ice','bug','steel'],h:['fire','water','rock','dragon'],0:[]},
+ water:{2:['fire','ground','rock'],h:['water','grass','dragon'],0:[]},
+ grass:{2:['water','ground','rock'],h:['fire','grass','poison','flying','bug','dragon','steel'],0:[]},
+ electric:{2:['water','flying'],h:['electric','grass','dragon'],0:['ground']},
+ ice:{2:['grass','ground','flying','dragon'],h:['fire','water','ice','steel'],0:[]},
+ fighting:{2:['normal','ice','rock','dark','steel'],h:['poison','flying','psychic','bug','fairy'],0:['ghost']},
+ poison:{2:['grass','fairy'],h:['poison','ground','rock','ghost'],0:['steel']},
+ ground:{2:['fire','electric','poison','rock','steel'],h:['grass','bug'],0:['flying']},
+ flying:{2:['grass','fighting','bug'],h:['electric','rock','steel'],0:[]},
+ psychic:{2:['fighting','poison'],h:['psychic','steel'],0:['dark']},
+ bug:{2:['grass','psychic','dark'],h:['fire','fighting','poison','flying','ghost','steel','fairy'],0:[]},
+ rock:{2:['fire','ice','flying','bug'],h:['fighting','ground','steel'],0:[]},
+ ghost:{2:['psychic','ghost'],h:['dark'],0:['normal']},
+ dragon:{2:['dragon'],h:['steel'],0:['fairy']},
+ dark:{2:['psychic','ghost'],h:['fighting','dark','fairy'],0:[]},
+ steel:{2:['ice','rock','fairy'],h:['fire','water','electric','steel'],0:[]},
+ fairy:{2:['fighting','dragon','dark'],h:['fire','poison','steel'],0:[]}
+};
+function m(a,d){const e=E[a];if(e[0].includes(d))return 0;if(e[2].includes(d))return 2;if(e.h.includes(d))return .5;return 1}
+
+const S={
+ normal:['평범함이 무기','평범한 사람은 유령을 때릴 수 없고, 맨주먹으로 바위·강철을 치면 손만 아픕니다. 대신 약점도 단련된 격투가 하나뿐입니다.'],
+ fire:['태우고 녹이고 달군다','풀과 벌레는 타고, 얼음은 녹고, 쇠는 달궈져 물러집니다. 물과 바위 앞에선 꺼지고, 용의 비늘은 불에 버팁니다.'],
+ water:['끄고 적시고 깎는다','불을 끄고, 땅을 진흙으로 만들고, 바위를 깎아냅니다. 풀은 물을 마시고 오히려 쑥쑥 자라니 반감.'],
+ grass:['빨아들이고 뿌리 내린다','물을 빨아들이고, 땅에 뿌리 내리고, 바위틈을 뚫고 자랍니다. 대신 불에 타고 새와 벌레에게 뜯어먹혀 반감당하는 상대가 7개나 됩니다.'],
+ electric:['물과 하늘을 노린다','물에는 전기가 잘 통하고, 하늘을 나는 새는 벼락을 맞습니다. 땅에 쏘면 전부 흘러가 버리는 접지라서 효과가 없습니다.'],
+ ice:['얼리면 다 약해진다','풀은 얼어 죽고, 땅은 꽁꽁 얼고, 새는 날개가 얼고, 용은 추위를 못 견딥니다. 공격은 강하지만 맞을 때는 약점 투성이.'],
+ fighting:['단련된 주먹','단련된 주먹으로 평범한 상대, 바위, 강철, 얼음을 부수고 비겁한 악당을 혼냅니다. 날아다니는 상대에겐 주먹이 닿지 않고, 유령은 통과해 버립니다.'],
+ poison:['스며들어 시들게 한다','풀을 시들게 하고 요정을 오염시킵니다. 하지만 단단한 쇠에는 독이 스며들지 못해 효과가 없습니다.'],
+ ground:['뒤흔들고 덮는다','지진으로 불을 덮고, 전기를 흘려보내고, 바위와 강철, 독까지 뒤흔듭니다. 공중에 떠 있는 비행에게는 닿지 않습니다.'],
+ flying:['하늘에서 내려꽂는다','하늘에서 풀과 벌레를 쪼아먹고, 격투가의 주먹이 닿지 않는 곳에서 공격합니다. 전기 줄, 바위, 강철에는 부딪혀 반감.'],
+ psychic:['마음이 몸을 이긴다','정신력으로 격투가의 몸을 누르고 독의 기운을 다스립니다. 속을 알 수 없는 악 앞에서는 초능력이 통하지 않습니다.'],
+ bug:['작아도 얕보지 마라','풀을 갉아먹고, 에스퍼는 벌레를 무서워하고, 악당은 벌레만도 못합니다. 대신 반감당하는 타입이 7개라 공격 범위는 좁습니다.'],
+ rock:['던지면 떨어진다','돌을 던지면 새가 떨어지고, 벌레가 깔리고, 불이 꺼지고, 얼음이 깨집니다. 비행 잡는 데 특히 유용합니다.'],
+ ghost:['겁주는 쪽','유령은 유령에게, 그리고 겁 많은 초능력자에게 강합니다. 평범한 노말과는 서로 아예 건드리지 못합니다.'],
+ dragon:['용을 잡는 건 용','용을 쓰러뜨리는 건 결국 같은 용입니다. 동화 속 요정에게는 힘을 전혀 쓰지 못합니다.'],
+ dark:['비열한 꼼수','꼼수로 초능력자를 속이고 유령의 뒤를 칩니다. 정정당당한 격투가와 요정에겐 혼나고, 악끼리는 서로 속이 뻔해 반감.'],
+ steel:['철벽의 방패','바위와 얼음을 부수고, 요정은 쇠를 싫어합니다. 방어가 진짜 강점으로 10개 타입을 반감하고 독은 무효입니다.'],
+ fairy:['용을 잠재우는 요정','동화처럼 용을 무찌르고, 격투가와 악당도 달래서 제압합니다. 독에 오염되고 쇠를 싫어하니 독·강철 조심.']
+};
+
+const P={
+ normal:'<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.8"/><circle cx="12" cy="12" r="3"/>',
+ fire:'<path d="M12 2.2c.6 3.1 3 4.6 4.6 7 1.3 1.9 1.9 3.6 1.9 5.2A6.5 6.5 0 0 1 12 21a6.5 6.5 0 0 1-6.5-6.6c0-2.6 1.3-4.6 2.9-6 .1 1.8.9 3.2 2.3 3.8-.4-3.4.3-6.4 1.3-10z"/>',
+ water:'<path d="M12 2.5c3.2 4.6 6.2 8 6.2 11.6a6.2 6.2 0 0 1-12.4 0C5.8 10.5 8.8 7.1 12 2.5z"/>',
+ grass:'<path d="M20.5 3.5C11.5 3.5 5 8 5 14.8c0 1.4.3 2.7.9 3.8L3.6 21 5 22.4l2.3-2.3c1.1.6 2.4.9 3.7.9 6.4 0 9.5-6.3 9.5-17.5z"/>',
+ electric:'<path d="M13.8 2 5 13.4h6.2L9.6 22 19 9.8h-6.3L13.8 2z"/>',
+ ice:'<g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5v19M3.8 7.2l16.4 9.6M3.8 16.8l16.4-9.6M9.4 4.3 12 6.9l2.6-2.6M9.4 19.7 12 17.1l2.6 2.6M4.3 10.9l3.6-.9-1-3.5M19.7 13.1l-3.6.9 1 3.5M4.3 13.1l3.6.9-1 3.5M19.7 10.9l-3.6-.9 1-3.5"/></g>',
+ fighting:'STAR:12,12,8,10.5,5.2',
+ poison:'<circle cx="10" cy="14.6" r="6.2"/><circle cx="17.6" cy="6.4" r="3.1"/><circle cx="19.8" cy="14.2" r="1.8"/>',
+ ground:'<path d="M1.5 19.5 8.8 7.5l4.2 6.4 3-4.4 6.5 10z"/>',
+ flying:'<path d="M20.5 3C12.2 4 7.2 9 5.6 15.4L4 21.2l1.9-.2 1.3-4C13.5 16.4 18.4 11.2 20.5 3z"/>',
+ psychic:'<path fill-rule="evenodd" d="M12 5C6.5 5 2.3 12 2.3 12S6.5 19 12 19s9.7-7 9.7-7S17.5 5 12 5zm0 3.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6z"/><circle cx="12" cy="12" r="1.7"/>',
+ bug:'<ellipse cx="12" cy="14.6" rx="5.8" ry="6.6"/><circle cx="12" cy="6.4" r="2.7"/><path d="M10.5 4.4 8 1.9M13.5 4.4 16 1.9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>',
+ rock:'<path d="M8 3h8l5.2 6.2L18 20.5H6L2.8 9.2z"/>',
+ ghost:'<path fill-rule="evenodd" d="M12 2.5a7.2 7.2 0 0 0-7.2 7.2v11.8l2.4-2 2.4 2 2.4-2 2.4 2 2.4-2 2.4 2V9.7A7.2 7.2 0 0 0 12 2.5zM9.4 8.6a1.7 1.7 0 1 0 0 3.4 1.7 1.7 0 0 0 0-3.4zm5.2 0a1.7 1.7 0 1 0 0 3.4 1.7 1.7 0 0 0 0-3.4z"/>',
+ dragon:'<g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M4.5 19.5C6.8 12.8 9 8 12.6 3.4M9.6 21.2c2-6 4.2-10.4 7.8-14.4M14.8 21.6c1.3-3.8 2.9-6.6 5.2-9"/></g>',
+ dark:'<path d="M15.2 2.6a9.5 9.5 0 1 0 6.3 15.9A7.9 7.9 0 0 1 15.2 2.6z"/>',
+ steel:'<path fill-rule="evenodd" d="M12 1.8 20.8 6.9v10.2L12 22.2 3.2 17.1V6.9zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>',
+ fairy:'STAR:11,13,4,9.5,2.6|STAR:19,5,4,3.4,1'
+};
+function star(cx,cy,n,ro,ri){let p=[];for(let i=0;i<n*2;i++){const r=i%2?ri:ro,a=(-90+i*180/n)*Math.PI/180;p.push((cx+r*Math.cos(a)).toFixed(2)+','+(cy+r*Math.sin(a)).toFixed(2))}return '<polygon points="'+p.join(' ')+'"/>'}
+function icon(k){let d=P[k];if(d.startsWith('STAR:'))d=d.split('|').map(s=>{const v=s.slice(5).split(',').map(Number);return star(...v)}).join('');return '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'+d+'</svg>'}
+const sty=t=>`--c:${t.c};--f:${t.f}`;
+const chip=k=>{const t=byK[k];return `<span class="chip${t.l?' light':''}" style="${sty(t)}"><i>${icon(k)}</i>${t.n}</span>`};
+const chips=(arr)=>arr.length?arr.map(chip).join(''):'<span class="none">없음</span>';
+const $=id=>document.getElementById(id);
+
+$('brandIcon').innerHTML=icon('electric');
+
+// hero board
+$('board').innerHTML=T.map(t=>`<button class="tile${t.l?' light':''}" style="${sty(t)}" data-k="${t.k}" aria-label="${t.n} 타입 도감 열기">${icon(t.k)}<span>${t.n}</span></button>`).join('');
+$('board').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;setDex(b.dataset.k);$('dex').scrollIntoView()});
+
+// rules examples
+$('eqExample').innerHTML=`${chip('rock')} → ${chip('fire')}${chip('flying')} <span>= ×2 × ×2 =</span> <span class="tag" style="background:var(--x2);color:#fff">×4</span> <span style="width:100%;height:0"></span> ${chip('ground')} → ${chip('fire')}${chip('flying')} <span>= ×2 × ×0 =</span> <span class="tag" style="background:var(--x0);color:var(--x0-ink)">×0</span>`;
+const asymRows=[['steel','electric','electric','steel'],['ice','ground','ground','ice']];
+$('asym').innerHTML=asymRows.map(([a,d,a2,d2])=>{const v1=m(a,d),v2=m(a2,d2);return `<div>${chip(a)} → ${chip(d)} ${tag(v1)} <span style="color:var(--muted)">그런데</span> ${chip(a2)} → ${chip(d2)} ${tag(v2)}</div>`}).join('');
+function fmt(v){return v===.5?'×½':v===.25?'×¼':'×'+(+v.toFixed(2))}
+function tag(v){const bg=v>=2?'var(--x2)':v===0?'var(--x0)':v<1?'var(--xh)':'var(--surface-2)';const fg=v===1?'var(--ink)':v===0?'var(--x0-ink)':'#fff';return `<span class="tag" style="background:${bg};color:${fg}">${fmt(v)}</span>`}
+
+// triangles
+function tri(id,nodes,labels){
+  const pos=[[160,48],[272,222],[48,222]],R=34;
+  let s='<defs><marker id="'+id+'h" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0 0 10 5 0 10z"/></marker></defs>';
+  for(let i=0;i<3;i++){const a=pos[i],b=pos[(i+1)%3];const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L;
+    const x1=a[0]+ux*(R+6),y1=a[1]+uy*(R+6),x2=b[0]-ux*(R+10),y2=b[1]-uy*(R+10);
+    s+=`<path class="edge" d="M${x1} ${y1}L${x2} ${y2}" marker-end="url(#${id}h)"/>`;
+    const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,w=labels[i].length*13+16;
+    s+=`<rect class="lblbg" x="${mx-w/2}" y="${my-12}" width="${w}" height="24" rx="12"/><text class="lbl" x="${mx}" y="${my+4.5}" text-anchor="middle">${labels[i]}</text>`}
+  nodes.forEach((k,i)=>{const t=byK[k],[x,y]=pos[i];s+=`<circle class="ring" cx="${x}" cy="${y}" r="${R}" fill="${t.c}"/><g color="${t.f}"><svg x="${x-15}" y="${y-19}" width="30" height="30" viewBox="0 0 24 24" fill="currentColor">${icon(k).replace(/^<svg[^>]*>|<\/svg>$/g,'')}</svg></g><text x="${x}" y="${y+24}" text-anchor="middle" style="font-family:var(--display);font-size:12px;fill:${t.f}">${t.n}</text>`});
+  $(id).innerHTML=s;
+}
+tri('tri1',['fire','grass','water'],['태운다','마시고 자란다','끈다']);
+tri('tri2',['fighting','dark','psychic'],['혼낸다','속인다','정신력으로 누른다']);
+
+// immune list
+const IM=[['normal','ghost','실체가 없는 유령은 맞지 않는다'],['fighting','ghost','주먹이 그냥 통과해 버린다'],['ghost','normal','평범한 사람은 유령에게 겁먹지 않는다'],['electric','ground','전기가 땅으로 흘러가 버린다 (접지)'],['ground','flying','떠 있으니 지진이 닿지 않는다'],['poison','steel','단단한 쇠에는 독이 스며들지 못한다'],['psychic','dark','속을 알 수 없어 초능력이 안 통한다'],['dragon','fairy','요정은 용의 힘을 잠재운다']];
+$('immune').innerHTML=IM.map(([a,d,r])=>`<div class="imm">${chip(a)}<span class="arrow">→</span>${chip(d)}<small>${r}</small></div>`).join('');
+const OL=['fire','electric','ice','fighting','rock','steel'];
+$('oneliners').innerHTML=OL.map(k=>`<button class="imm" style="border:0;cursor:pointer;text-align:left;grid-template-columns:auto 1fr" data-k="${k}">${chip(k)}<small style="grid-column:auto"><b style="color:var(--ink)">${S[k][0]}</b> · ${S[k][1].split('.')[0]}.</small></button>`).join('');
+$('oneliners').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;setDex(b.dataset.k);$('dex').scrollIntoView()});
+
+// pickers
+function picker(el,onClick){el.innerHTML=T.map(t=>`<button class="pick" style="${sty(t)}" data-k="${t.k}" aria-pressed="false"><i>${icon(t.k)}</i><span>${t.n}</span></button>`).join('');el.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(b)onClick(b.dataset.k)})}
+function press(el,keys){el.querySelectorAll('.pick').forEach(b=>b.setAttribute('aria-pressed',keys.includes(b.dataset.k)))}
+
+// dex
+picker($('dexPicker'),setDex);
+function setDex(k){const t=byK[k];press($('dexPicker'),[k]);
+  const c=$('dexCard');c.style.cssText=sty(t);
+  c.innerHTML=`${icon(k)}<div><div class="tagline">${S[k][0]}</div><h3>${t.n}</h3></div><p>${S[k][1]}</p>`;
+  $('atk2').innerHTML=chips(E[k][2]);$('atkh').innerHTML=chips(E[k].h);$('atk0').innerHTML=chips(E[k][0]);
+  const d2=[],dh=[],d0=[];T.forEach(a=>{const v=m(a.k,k);if(v===2)d2.push(a.k);else if(v===.5)dh.push(a.k);else if(v===0)d0.push(a.k)});
+  $('def2').innerHTML=chips(d2);$('defh').innerHTML=chips(dh);$('def0').innerHTML=chips(d0);
+}
+setDex('fire');
+
+// ---------- pokémon data + search ----------
+const DEX=JSON.parse($('pkdata').textContent).map((r,i)=>({i,no:r[0],n:r[1],t:r[2],s:r[3],form:r[1].includes('(')}));
+const CHO='ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
+function cho(s){let o='';for(const ch of s){const c=ch.charCodeAt(0)-0xAC00;o+=(c>=0&&c<11172)?CHO[Math.floor(c/588)]:ch}return o}
+DEX.forEach(p=>{p.key=p.n.replace(/\s/g,'').toLowerCase();p.ck=cho(p.key)});
+const find=n=>DEX.find(p=>p.n===n);
+const no=n=>'No.'+String(n).padStart(4,'0');
+const tname=k=>byK[k].n;
+function search(q){
+  q=(q||'').trim().replace(/\s/g,'').toLowerCase().replace(/^(no\.?|#)/,'');
+  if(!q)return DEX;
+  const num=/^\d+$/.test(q)?+q:null,isCho=/^[ㄱ-ㅎ]+$/.test(q),res=[];
+  for(const p of DEX){let sc=-1;
+    if(num!==null){if(p.no===num)sc=0;else if(String(p.no).startsWith(q))sc=2}
+    else{const hay=isCho?p.ck:p.key,i=hay.indexOf(q);if(hay===q)sc=0;else if(i===0)sc=1;else if(i>0)sc=3}
+    if(sc>=0)res.push([sc+(p.form?.5:0),p])}
+  return res.sort((a,b)=>a[0]-b[0]||a[1].no-b[1].no).map(x=>x[1]);
+}
+const MAG='<svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>';
+const dotc=k=>{const t=byK[k];return `<span class="dotc" style="${sty(t)}" title="${t.n}">${icon(k)}</span>`};
+const chipS=k=>chip(k).replace('class="chip','class="chip sm');
+function makeCombo(wrap,opt){
+  wrap.innerHTML=`${MAG}<input type="search" id="${opt.id}" placeholder="${opt.ph||'예: 리자몽, ㄹㅈㅁ, 6'}" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="${opt.id}-l"><ul role="listbox" id="${opt.id}-l" hidden></ul>`;
+  const inp=wrap.querySelector('input'),ul=wrap.querySelector('ul');let items=[],act=-1;
+  function draw(){ul.innerHTML=items.length?items.map((p,i)=>`<li role="option" id="${opt.id}-o${i}" data-i="${i}" aria-selected="${i===act}"><span class="no">${no(p.no)}</span><span class="nm">${p.n}</span><span class="ts">${p.t.map(dotc).join('')}</span></li>`).join(''):'<li class="empty">찾는 포켓몬이 없어요. 이름 일부나 초성으로 검색해 보세요.</li>';
+    inp.setAttribute('aria-activedescendant',act>=0?`${opt.id}-o${act}`:'')}
+  function open(){items=search(inp.value).slice(0,8);act=items.length?0:-1;draw();ul.hidden=false;inp.setAttribute('aria-expanded','true')}
+  function close(){ul.hidden=true;inp.setAttribute('aria-expanded','false')}
+  function pick(p){inp.value=p.n;close();inp.blur();opt.onPick(p)}
+  inp.addEventListener('input',()=>{inp.value.trim()?open():close()});
+  inp.addEventListener('focus',()=>inp.select());
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){if(ul.hidden)open();else if(items.length){act=(act+(e.key==='ArrowDown'?1:-1)+items.length)%items.length;draw();const li=ul.children[act];li&&li.scrollIntoView({block:'nearest'})}e.preventDefault()}
+    else if(e.key==='Enter'){if(!ul.hidden&&items[act]){pick(items[act]);e.preventDefault()}}
+    else if(e.key==='Escape')close()});
+  ul.addEventListener('mousedown',e=>e.preventDefault());
+  ul.addEventListener('click',e=>{const li=e.target.closest('[data-i]');if(li)pick(items[+li.dataset.i])});
+  inp.addEventListener('blur',()=>setTimeout(close,100));
+  return{set(p){inp.value=p?p.n:''}};
+}
+function defMult(atkType,defTypes){return defTypes.reduce((a,d)=>a*m(atkType,d),1)}
+function profile(types){const g={4:[],2:[],.5:[],.25:[],0:[]};T.forEach(a=>{const v=defMult(a.k,types);if(v in g)g[v].push(a.k)});return g}
+const grad=p=>{const a=byK[p.t[0]],b=byK[p.t[1]||p.t[0]];return `--c1:${a.c};--c2:${p.t[1]?b.c:'color-mix(in srgb,'+a.c+' 72%,#000)'};--f:${a.f}`};
+const SL=['HP','공격','방어','특공','특방','스피드'];
+function statBlock(p){const tot=p.s.reduce((a,b)=>a+b,0);return `<div class="stats">${p.s.map((v,i)=>`<div class="st"><span>${SL[i]}</span><b>${v}</b><span class="bar"><i style="width:${Math.min(100,v/200*100)}%"></i></span></div>`).join('')}<div class="st tot"><span>합계</span><b>${tot}</b><span></span></div></div>`}
+
+// ---------- calc ----------
+let atk='ice',def=['dragon','flying'],defMon=find('보만다');
+picker($('atkPicker'),k=>{atk=k;calc()});
+picker($('defPicker'),k=>{if(def.includes(k))def=def.filter(x=>x!==k);else{def.push(k);if(def.length>2)def.shift()}defMon=null;calcCombo.set(null);calc()});
+const calcCombo=makeCombo($('calcCombo'),{id:'calcSearch',onPick:p=>{defMon=p;def=[...p.t];calc()}});
+calcCombo.set(defMon);
+$('stab').addEventListener('change',calc);
+function calc(){press($('atkPicker'),[atk]);press($('defPicker'),def);
+  const big=$('big');
+  if(!def.length){$('matchup').innerHTML=`${chip(atk)} <span style="color:var(--muted)">→ 상대 포켓몬이나 타입을 골라 주세요</span>`;big.textContent='—';big.style.color='var(--muted)';$('msg').textContent='';$('break').innerHTML='';return}
+  const parts=def.map(d=>m(atk,d)),v=parts.reduce((a,b)=>a*b,1),st=$('stab').checked,shown=st?v*1.5:v;
+  $('matchup').innerHTML=`${chip(atk)} <span style="color:var(--muted);font-weight:700">→</span> ${defMon?`<span class="who">${defMon.n}</span>`:''}${def.map(chip).join('')}`;
+  big.textContent=fmt(shown);big.style.color=v>=2?'var(--x2)':v<1&&v>0?'var(--xh)':'var(--ink)';
+  big.classList.remove('pop');void big.offsetWidth;big.classList.add('pop');
+  $('msg').textContent=v===0?'효과가 없는 것 같다…':v>=2?'효과가 굉장했다!':v<1?'효과가 별로인 듯하다…':'보통 데미지';
+  let br=def.map((d,i)=>`<div>${chip(d)} 에게 ${tag(parts[i])}</div>`).join('');
+  if(def.length>1)br+=`<div>곱하면 ${parts.map(fmt).join(' × ')} = <b style="color:var(--ink)">${fmt(v)}</b></div>`;
+  if(st)br+=`<div>자속 보정 ×1.5 적용 → <b style="color:var(--ink)">${fmt(shown)}</b></div>`;
+  $('break').innerHTML=br;
+}
+calc();
+
+// ---------- pokédex ----------
+let pq='',pf=[],plimit=48,sel=find('리자몽');
+$('dexSearchWrap').innerHTML=`${MAG}<input type="search" id="dexSearch" placeholder="이름, 초성(ㅍㅋㅊ), 도감 번호로 검색" autocomplete="off" aria-label="포켓몬 검색">`;
+$('dexSearch').addEventListener('input',e=>{pq=e.target.value;plimit=48;plistRender()});
+$('tfilter').innerHTML=T.map(t=>`<button class="tf" style="${sty(t)}" data-k="${t.k}" aria-pressed="false">${dotc(t.k)}${t.n}</button>`).join('');
+$('tfilter').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;const k=b.dataset.k;if(pf.includes(k))pf=pf.filter(x=>x!==k);else{pf.push(k);if(pf.length>2)pf.shift()}plimit=48;plistRender()});
+$('pclear').addEventListener('click',()=>{pq='';pf=[];$('dexSearch').value='';plimit=48;plistRender()});
+$('pmore').addEventListener('click',()=>{plimit+=96;plistRender()});
+function plistRender(){
+  let arr=search(pq);if(pf.length)arr=arr.filter(p=>pf.every(t=>p.t.includes(t)));
+  $('tfilter').querySelectorAll('.tf').forEach(b=>b.setAttribute('aria-pressed',pf.includes(b.dataset.k)));
+  $('pcount').textContent=`전체 ${DEX.length.toLocaleString()}개 중 ${arr.length.toLocaleString()}개`+(pf.length===2?' · 두 타입을 모두 가진 포켓몬':'');
+  $('pclear').hidden=!(pq||pf.length);
+  $('plist').innerHTML=arr.length?arr.slice(0,plimit).map(p=>`<button class="pc" data-i="${p.i}" style="--c1:${byK[p.t[0]].c}" aria-pressed="${sel===p}"><span class="no">${no(p.no)}</span><span class="nm">${p.n}</span><span class="ts chips">${p.t.map(chipS).join('')}</span></button>`).join(''):'<p class="none">조건에 맞는 포켓몬이 없어요. 필터를 줄이거나 검색어를 바꿔 보세요.</p>';
+  const left=arr.length-plimit;$('pmore').hidden=left<=0;$('pmore').textContent=`${Math.min(96,left)}개 더 보기`;
+}
+$('plist').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(!b)return;sel=DEX[+b.dataset.i];pdetail();$('plist').querySelectorAll('.pc').forEach(x=>x.setAttribute('aria-pressed',x===b));if(matchMedia('(max-width:920px)').matches)$('pdetail').scrollIntoView({block:'start'})});
+function pdetail(){const p=sel,g=profile(p.t);
+  const row=(lab,col,arr)=>arr.length?`<div class="row"><div class="k"><span class="dot" style="background:${col}"></span>${lab}</div><div class="chips">${arr.map(chipS).join('')}</div></div>`:'';
+  $('pdetail').innerHTML=`<div class="phead" style="${grad(p)}"><div class="mono">${icon(p.t[0])}</div><div><span class="no">${no(p.no)}</span><h3>${p.n}</h3></div></div>
+  <div class="pbody"><div class="chips">${p.t.map(chip).join('')}</div>${statBlock(p)}
+  <div class="prof">${row('×4 큰 약점','var(--x4)',g[4])}${row('×2 약점','var(--x2)',g[2])}${row('×½ 반감','var(--xh)',g[.5])}${row('×¼ 크게 반감','var(--xq)',g[.25])}${row('×0 무효','var(--x0)',g[0])}</div>
+  <div class="btns"><button class="btn primary" data-act="A">내 포켓몬으로 배틀</button><button class="btn" data-act="B">상대로 배틀</button><button class="btn" data-act="C">계산기 상대로</button><button class="btn" data-act="E">엔트리에 넣기</button></div></div>`;
+}
+$('pdetail').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+  if(a==='C'){defMon=sel;def=[...sel.t];calcCombo.set(sel);calc();$('calc').scrollIntoView();return}
+  if(a==='E'){if(team.length<6&&!team.includes(sel)){team.push(sel);teamChanged()}$('team').scrollIntoView();return}
+  if(a==='A'){A=sel;comboA.set(A)}else{B=sel;comboB.set(B)}sim();$('battle').scrollIntoView()});
+plistRender();pdetail();
+
+// ---------- battle sim ----------
+let A=find('리자몽'),B=find('거북왕');
+const comboA=makeCombo($('simA'),{id:'simAsearch',onPick:p=>{A=p;sim()}});
+const comboB=makeCombo($('simB'),{id:'simBsearch',onPick:p=>{B=p;sim()}});
+comboA.set(A);comboB.set(B);
+$('swap').addEventListener('click',()=>{[A,B]=[B,A];comboA.set(A);comboB.set(B);sim()});
+function fighter(p){return `<div class="fighter" style="${grad(p)}"><div class="mono">${icon(p.t[0])}</div><div><span class="no">${no(p.no)}</span><h3>${p.n}</h3><div class="chips" style="margin-top:6px">${p.t.map(chipS).join('')}</div></div></div><div style="margin-top:14px">${statBlock(p)}</div>`}
+function hits(x,y){return x.t.map(t=>({t,v:defMult(t,y.t)})).sort((a,b)=>b.v-a.v)}
+function dirPanel(x,y,h){const g=profile(y.t),weak=[...g[4],...g[2]];
+  const rows=h.map(r=>`<div class="atkrow"><span>${chip(r.t)}</span>${tag(r.v)}<small>자속 포함 ${fmt(r.v*1.5)}</small></div>`).join('');
+  const extra=weak.filter(k=>!x.t.includes(k));
+  return `<div class="dir"><h4>${x.n} <span style="color:var(--muted)">→</span> ${y.n}</h4><div class="row"><div class="k">자기 타입 기술 (자속 ×1.5)</div>${rows}</div>
+  <div class="row"><div class="k">${y.n}의 약점${extra.length?' · 서브 기술로 챙기면 좋은 타입':''}</div><div class="chips">${weak.length?weak.map(k=>chipS(k)+(g[4].includes(k)?'<span class="tag" style="background:var(--x4);color:#fff">×4</span>':'')).join(''):'<span class="none">약점 없음</span>'}</div></div></div>`}
+function sim(){
+  $('fA').innerHTML=fighter(A);$('fB').innerHTML=fighter(B);
+  const ha=hits(A,B),hb=hits(B,A),a=ha[0].v,b=hb[0].v,sa=A.s[5],sb=B.s[5];
+  const faster=sa>sb?A:sb>sa?B:null;
+  const spd=faster?`스피드 ${A.n} ${sa} · ${B.n} ${sb}, ${faster.n}이(가) 먼저 움직입니다.`:`스피드가 ${sa}로 같아서 선공은 운에 맡겨집니다.`;
+  let title,desc,win=null;
+  if(a>b){win=A;title=`${A.n} 유리`;desc=`${A.n}의 ${tname(ha[0].t)} 기술은 ${fmt(a)}, ${B.n}의 가장 좋은 자속 기술은 ${fmt(b)}로 들어갑니다.`}
+  else if(b>a){win=B;title=`${B.n} 유리`;desc=`${B.n}의 ${tname(hb[0].t)} 기술은 ${fmt(b)}, ${A.n}의 가장 좋은 자속 기술은 ${fmt(a)}로 들어갑니다.`}
+  else{title=faster?`상성은 호각, 속도는 ${faster.n}`:'완전한 호각';desc=`서로의 가장 좋은 자속 기술이 둘 다 ${fmt(a)}로 들어갑니다.`}
+  const vstyle=win?`style="${grad(win)};background:linear-gradient(135deg,var(--c1),var(--c2));color:var(--f)"`:'';
+  $('analysis').innerHTML=`<div class="verdict" ${vstyle}><span class="eyebrow" style="color:inherit;opacity:.8;margin:0">타입 상성 판정</span><h3>${title}</h3><p>${desc} ${spd}</p></div>${dirPanel(A,B,ha)}${dirPanel(B,A,hb)}`;
+}
+sim();
+
+// ---------- team builder + feedback ----------
+const SAMPLE=['리자몽','갸라도스','망나뇽','잠만보','한카리아스','팬텀'];
+const store={get(){try{return JSON.parse(localStorage.getItem('entry-v1')||'null')}catch(e){return null}},set(v){try{localStorage.setItem('entry-v1',JSON.stringify(v))}catch(e){}}};
+let team=(store.get()||SAMPLE).map(find).filter(Boolean).slice(0,6);
+const teamCombo=makeCombo($('teamCombo'),{id:'teamSearch',ph:'엔트리에 넣을 포켓몬 검색 (이름, 초성, 번호)',onPick:p=>{if(team.length>=6){note('엔트리는 6마리까지예요. 한 마리를 빼고 다시 넣어 주세요.');teamCombo.set(null);return}team.push(p);teamCombo.set(null);teamChanged()}});
+$('teamSample').addEventListener('click',()=>{team=SAMPLE.map(find);teamChanged()});
+$('teamClear').addEventListener('click',()=>{team=[];teamChanged()});
+$('diag').addEventListener('click',e=>{const b=e.target.closest('[data-add]');if(!b||b.disabled)return;if(team.length>=6){note('엔트리는 6마리까지예요. 한 마리를 빼고 다시 넣어 주세요.');return}const p=DEX[+b.dataset.add];team.push(p);note(p.n+'을(를) 엔트리에 넣었어요.');teamChanged()});
+$('slots').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b)return;team.splice(+b.dataset.rm,1);teamChanged()});
+function teamChanged(){store.set(team.map(p=>p.n));renderTeam()}
+function note(t){const n=$('teamNote');n.textContent=t||'';n.hidden=!t}
+const names=arr=>arr.map(p=>p.n).join(', ');
+function analyze(){
+  const rows=T.map(a=>{const w=[],r=[],z=[],x4=[];team.forEach(p=>{const v=defMult(a.k,p.t);if(v>=2)w.push(p);if(v===4)x4.push(p);if(v>0&&v<1)r.push(p);if(v===0)z.push(p)});return{k:a.k,w,r,z,x4,danger:w.length>=3&&w.length>r.length+z.length,shaky:w.length>=2&&r.length+z.length===0}});
+  const stab=[...new Set(team.flatMap(p=>p.t))];
+  const uncovered=T.filter(d=>!stab.some(a=>m(a,d.k)===2)).map(d=>d.k);
+  const cnt={};team.forEach(p=>p.t.forEach(t=>cnt[t]=(cnt[t]||0)+1));
+  const overlap=Object.entries(cnt).filter(([,c])=>c>=3).map(([k,c])=>({k,c}));
+  const fast=team.filter(p=>p.s[5]>=100),byspd=[...team].sort((a,b)=>b.s[5]-a.s[5]);
+  const holes=rows.filter(r=>r.danger||r.shaky).map(r=>r.k);
+  const sugg=holes.length||uncovered.length?T.filter(t=>!stab.includes(t.k)).map(t=>({k:t.k,s:holes.filter(h=>m(h,t.k)<1).length*2+uncovered.filter(u=>m(t.k,u)===2).length})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,4).map(x=>x.k):[];
+  const recs=(holes.length||uncovered.length)?recommend(holes,uncovered):[];
+  return{rows,stab,uncovered,overlap,fast,byspd,holes,sugg,recs};
+}
+function recommend(holes,uncovered){
+  const have=new Set(team.map(p=>p.no)),seen=new Set(),out=[];
+  const scored=DEX.filter(p=>!have.has(p.no)&&!/\((메가|원시)/.test(p.n)).map(p=>{
+    const bst=p.s.reduce((a,b)=>a+b,0);if(bst<480||bst>=670)return null;
+    let sc=0;const guard=[],hit=[];
+    holes.forEach(h=>{const v=defMult(h,p.t);if(v===0){sc+=3;guard.push(h)}else if(v<1){sc+=2;guard.push(h)}else if(v>=2)sc-=2.5});
+    uncovered.forEach(u=>{if(p.t.some(t=>m(t,u)===2)){sc+=1.5;hit.push(u)}});
+    if(!guard.length&&!hit.length)return null;
+    sc+=Math.max(0,Math.min(bst,540)-480)/30;
+    return{p,sc,guard,hit};
+  }).filter(Boolean).sort((a,b)=>b.sc-a.sc);
+  for(const r of scored){const key=[...r.p.t].sort().join('/');if(seen.has(key))continue;seen.add(key);out.push(r);if(out.length===4)break}
+  return out;
+}
+function renderTeam(){
+  $('slots').innerHTML=Array.from({length:6},(_,i)=>{const p=team[i];if(!p)return `<div class="slot empty"><span>${i+1}</span>빈 슬롯</div>`;
+    return `<div class="slot" style="${grad(p)}"><button class="rm" data-rm="${i}" aria-label="${p.n} 빼기">×</button><div class="mono">${icon(p.t[0])}</div><b>${p.n}</b><span class="ts">${p.t.map(chipS).join('')}</span></div>`}).join('');
+  if(!team.length){$('dgrid').innerHTML='<p class="none">포켓몬을 넣으면 방어 상성이 여기에 나타나요.</p>';$('diag').innerHTML='<p class="none">검색창에서 포켓몬을 한 마리 이상 넣어 주세요.</p>';return}
+  const A=analyze();
+  $('dgrid').innerHTML=A.rows.map(r=>{const t=byK[r.k];return `<div class="dc${r.danger?' danger':(!r.w.length&&r.r.length+r.z.length>=2?' solid':'')}" title="${t.n} 기술: 약점 ${r.w.length} · 반감 ${r.r.length} · 무효 ${r.z.length}"><span class="ib" style="${sty(t)}">${icon(r.k)}</span>${t.n}<span class="nums"><span class="w">약${r.w.length}</span><span class="r">반${r.r.length+r.z.length}</span></span></div>`}).join('');
+  const out=[];
+  A.rows.filter(r=>r.danger).forEach(r=>out.push(['bad','위험',`<b>${tname(r.k)}</b> 기술에 ${r.w.length}마리가 약합니다 (${names(r.w)}). 받아줄 수 있는 포켓몬은 ${r.r.length+r.z.length?names([...r.r,...r.z]):'없습니다'}.`]));
+  A.rows.filter(r=>!r.danger&&r.shaky).forEach(r=>out.push(['warn','주의',`<b>${tname(r.k)}</b> 기술에 ${r.w.length}마리가 약한데 버틸 포켓몬이 없습니다 (${names(r.w)}).`]));
+  const x4=A.rows.filter(r=>r.x4.length);
+  if(x4.length)out.push(['warn','×4',`4배 약점이 있습니다. ${x4.map(r=>`${names(r.x4)}(${tname(r.k)})`).join(' · ')}`]);
+  if(A.uncovered.length)out.push(['warn','공격',`자속 기술로 약점을 찌를 수 없는 타입이 ${A.uncovered.length}개 있습니다. 서브 기술로 보완해 보세요.<div class="chips">${A.uncovered.map(chipS).join('')}</div>`]);
+  else out.push(['good','공격','자속 기술만으로 18개 타입 모두에게 효과가 굉장한 기술을 쓸 수 있습니다.']);
+  A.overlap.forEach(o=>out.push(['warn','중복',`<b>${tname(o.k)}</b> 타입이 ${o.c}마리 겹칩니다. 같은 약점을 공유하기 쉽습니다.`]));
+  out.push([A.fast.length?'good':'warn','스피드',A.fast.length?`종족값 스피드 100 이상이 ${A.fast.length}마리 (${names(A.fast)}). 가장 빠른 포켓몬은 ${A.byspd[0].n}(${A.byspd[0].s[5]})입니다.`:`스피드 100 이상인 포켓몬이 없습니다. 가장 빠른 포켓몬은 ${A.byspd[0].n}(${A.byspd[0].s[5]})입니다.`]);
+  if(!A.rows.some(r=>r.danger||r.shaky))out.push(['good','방어','여러 마리가 함께 약한 타입이 없어 방어 균형이 좋습니다.']);
+  if(A.sugg.length)out.push(['tip','추천 타입',`구멍을 메우려면 이런 타입의 포켓몬을 넣어 보세요.<div class="chips">${A.sugg.map(chipS).join('')}</div>`]);
+  if(A.recs.length)out.push(['tip','추천 포켓몬',`${team.length<6?'눌러서 엔트리에 바로 넣을 수 있어요.':'엔트리가 가득 찼어요. 한 마리를 뺀 뒤 눌러서 넣어 보세요.'}<div class="recs">${A.recs.map(r=>`<button class="rec" data-add="${r.p.i}" style="${grad(r.p)}"${team.length>=6?' disabled':''}><span class="mono">${icon(r.p.t[0])}</span><span class="rt"><b>${r.p.n}</b><span class="ts">${r.p.t.map(chipS).join('')}</span><small>${[r.guard.length?r.guard.map(tname).join('·')+' 기술을 버팀':'',r.hit.length?r.hit.map(tname).join('·')+' 약점을 찌름':''].filter(Boolean).join(' · ')}</small></span><span class="plus" aria-hidden="true">+</span></button>`).join('')}</div>`]);
+  if(team.length<6)out.push(['tip','슬롯',`엔트리가 ${team.length}마리입니다. ${6-team.length}자리가 더 남았어요.`]);
+  $('diag').innerHTML=out.map(([c,l,t])=>`<div class="dg"><span class="sv ${c}">${l}</span><div>${t}</div></div>`).join('');
+}
+renderTeam();
+
+// chart
+const tb=$('chartTable');
+let h='<thead><tr><th class="corner">공격 ↓<br>방어 →</th>'+T.map(t=>`<th scope="col" title="${t.n}"><div class="hb"><span class="ib" style="${sty(t)}">${icon(t.k)}</span>${t.n}</div></th>`).join('')+'</tr></thead><tbody>';
+T.forEach((a,r)=>{h+=`<tr><th scope="row"><div class="rb"><span class="ib" style="${sty(a)}">${icon(a.k)}</span>${a.n}</div></th>`;
+  T.forEach((d,c)=>{const v=m(a.k,d.k);const cls=v===2?'v2':v===.5?'vh':v===0?'v0':'';h+=`<td class="${cls}" data-r="${r}" data-c="${c}" title="${a.n} → ${d.n} ${fmt(v)}">${v===1?'':v===.5?'½':v}</td>`});h+='</tr>'});
+tb.innerHTML=h+'</tbody>';
+const cells=[...tb.querySelectorAll('td')];
+tb.addEventListener('mouseover',e=>{const td=e.target.closest('td');cells.forEach(x=>x.classList.remove('hl','cross'));if(!td)return;const r=td.dataset.r,c=td.dataset.c;cells.forEach(x=>{if(x.dataset.r===r||x.dataset.c===c)x.classList.add('hl')});td.classList.remove('hl');td.classList.add('cross')});
+tb.addEventListener('mouseleave',()=>cells.forEach(x=>x.classList.remove('hl','cross')));
+tb.addEventListener('click',e=>{const td=e.target.closest('td');if(!td)return;atk=T[td.dataset.r].k;def=[T[td.dataset.c].k];defMon=null;calcCombo.set(null);calc();$('calc').scrollIntoView()});
+})();
+</script>
+</body>
+</html>
