@@ -927,6 +927,20 @@ const cells=[...tb.querySelectorAll('td')];
 tb.addEventListener('mouseover',e=>{const td=e.target.closest('td');cells.forEach(x=>x.classList.remove('hl','cross'));if(!td)return;const r=td.dataset.r,c=td.dataset.c;cells.forEach(x=>{if(x.dataset.r===r||x.dataset.c===c)x.classList.add('hl')});td.classList.remove('hl');td.classList.add('cross')});
 tb.addEventListener('mouseleave',()=>cells.forEach(x=>x.classList.remove('hl','cross')));
 tb.addEventListener('click',e=>{const td=e.target.closest('td');if(!td)return;atk=T[td.dataset.r].k;def=[T[td.dataset.c].k];defMon=null;calcCombo.set(null);calc();$('calc').scrollIntoView()});
+
+// ---------- start at the top; menu scrolls without changing the address ----------
+(function(){
+  let touched=false;
+  ['wheel','touchstart','keydown','mousedown'].forEach(ev=>addEventListener(ev,()=>{touched=true},{once:true,passive:true}));
+  try{if('scrollRestoration' in history)history.scrollRestoration='manual'}catch(e){}
+  try{if(location.hash)history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+  const top=()=>{if(!touched)window.scrollTo(0,0)};
+  top();addEventListener('load',top);addEventListener('pageshow',top);
+  document.querySelectorAll('.nav a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));if(!t)return;e.preventDefault();
+    t.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+  }));
+})();
 })();
 </script>
 </body>
