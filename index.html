@@ -94,14 +94,40 @@ section{padding-block:56px 8px}
 .none{color:var(--muted);font-size:14px}
 
 /* rules */
-.rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;grid-auto-flow:dense}
-.rule{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;gap:10px;align-content:start}
-.rule .x{font-family:var(--mono);font-weight:700;font-size:34px;line-height:1;letter-spacing:-.02em}
-.rule h3{font-size:20px}
-.rule p{color:var(--muted);font-size:15px}
+.mults{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:14px}
+.rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.rule{--tone:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;display:grid;gap:14px;align-content:start}
 .rule.wide{grid-column:span 2}
-.rule .say{font-family:var(--mono);font-size:12.5px;color:var(--ink);background:var(--surface-2);padding:6px 10px;border-radius:8px;justify-self:start}
-.eq{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-family:var(--mono);font-weight:700;font-size:15px}
+.rule.full{grid-column:1/-1}
+.rule h3{font-size:22px;line-height:1.3;letter-spacing:.01em}
+.rule p{color:var(--muted);font-size:15px;line-height:1.7}
+.mults .rule{grid-template-rows:auto auto auto 1fr auto auto}
+.mult-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.rule .x{font-weight:800;font-size:46px;line-height:1;letter-spacing:-.03em;color:var(--tone)}
+.mult-name{font-size:13px;font-weight:700;color:var(--muted)}
+.gauge{position:relative;height:10px;border-radius:99px;background:var(--surface-2)}
+.gauge i{position:absolute;inset:0 auto 0 0;border-radius:99px;background:var(--tone)}
+.gauge b{position:absolute;left:50%;top:-4px;bottom:-4px;width:2px;border-radius:2px;background:var(--muted);opacity:.55}
+.say{position:relative;border:2px solid var(--ink);border-radius:12px;padding:10px 14px 10px;font-size:14.5px;font-weight:700;background:var(--surface);color:var(--ink)}
+.say::after{content:"";position:absolute;right:12px;bottom:8px;border:5px solid transparent;border-top:6px solid var(--tone);border-bottom:0}
+.cnt{font-size:13px;color:var(--muted);font-weight:600}
+.cnt b{color:var(--ink);font-weight:800}
+.fx-list{display:grid;gap:12px}
+.fx{background:var(--surface-2);border-radius:16px;padding:14px 16px;display:grid;gap:12px}
+.fx-cap{font-size:14.5px;color:var(--muted)}
+.fx-cap b{color:var(--ink)}
+.fx-row{display:flex;flex-wrap:wrap;align-items:flex-start;gap:10px}
+.fx-cell{display:grid;justify-items:center;gap:6px}
+.fx-lab{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.02em}
+.fx-op{font-size:20px;line-height:1.2;font-weight:800;color:var(--muted);padding-top:22px}
+.fx-res{margin-left:4px}
+.tag.lg{font-size:20px;padding:6px 14px;border-radius:10px;font-weight:800}
+.pairs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.pair{background:var(--surface-2);border-radius:16px;padding:16px;display:grid;gap:10px;align-content:start}
+.pair-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--surface)}
+.pair-row .s{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:14.5px;font-weight:600}
+.pair .why{font-size:14px;color:var(--muted);line-height:1.6;padding-inline:2px}
+.tag{font-family:var(--mono);font-weight:700;font-size:13px;padding:2px 8px;border-radius:6px;white-space:nowrap}
 
 /* stories */
 .story-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
@@ -118,9 +144,6 @@ section{padding-block:56px 8px}
 .imm{display:grid;grid-template-columns:auto auto auto 1fr;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:var(--surface-2)}
 .imm .arrow{font-family:var(--mono);color:var(--muted);font-weight:700}
 .imm small{color:var(--muted);font-size:13.5px;line-height:1.4}
-.asym{display:grid;gap:10px}
-.asym div{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:15px}
-.tag{font-family:var(--mono);font-weight:700;font-size:13px;padding:2px 8px;border-radius:6px}
 
 /* dex */
 .picker{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px}
@@ -304,8 +327,9 @@ footer a{font-weight:700}
 
 @media (max-width:920px){
   .hero{grid-template-columns:1fr;gap:28px}
-  .rules{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .rule.wide{grid-column:span 2}
+  .mults{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rules{grid-template-columns:1fr}
+  .rule.wide{grid-column:auto}
   .story-grid{grid-template-columns:1fr}
   .dex{grid-template-columns:1fr}
   .calc{grid-template-columns:1fr}
@@ -326,8 +350,11 @@ footer a{font-weight:700}
   .recs{grid-template-columns:1fr}
   .board{grid-template-columns:repeat(3,minmax(0,1fr))}
   .picker{grid-template-columns:repeat(6,minmax(0,1fr))}
-  .rules{grid-template-columns:1fr}
-  .rule.wide{grid-column:auto}
+  .mults{grid-template-columns:1fr}
+  .pairs{grid-template-columns:1fr}
+  .rule{padding:20px}
+  .fx{padding:12px}
+  .fx-row{gap:6px}
   .dex-body{grid-template-columns:1fr}
   .imm{grid-template-columns:auto auto auto;}
   .imm small{grid-column:1/-1}
@@ -373,39 +400,56 @@ footer a{font-weight:700}
       <h2>배율은 네 가지뿐</h2>
       <p>기술의 타입이 상대 포켓몬의 타입과 만나면 데미지에 배율이 붙습니다. 규칙 자체는 단순하고, 헷갈리는 건 어떤 조합이 어떤 배율인지입니다.</p>
     </div>
-    <div class="rules">
-      <article class="rule">
-        <div class="x" style="color:var(--x2)">×2</div>
+    <div class="mults">
+      <article class="rule" style="--tone:var(--x2)">
+        <div class="mult-top"><span class="x">×2</span><span class="mult-name">두 배</span></div>
+        <div><div class="gauge" aria-hidden="true"><i style="width:100%"></i><b></b></div></div>
         <h3>효과가 굉장하다</h3>
-        <p>상대가 약점인 타입으로 때리면 두 배. 배틀의 기본은 이 약점을 찌르는 것입니다.</p>
-        <span class="say">“효과가 굉장했다!”</span>
+        <p>상대가 약한 타입으로 때리면 두 배. 배틀은 이 약점을 찌르는 싸움입니다.</p>
+        <span class="cnt" data-v="2"></span>
+        <div class="say">효과가 굉장했다!</div>
       </article>
-      <article class="rule">
-        <div class="x" style="color:var(--xh)">×½</div>
+      <article class="rule" style="--tone:var(--muted)">
+        <div class="mult-top"><span class="x" style="color:var(--ink)">×1</span><span class="mult-name">보통</span></div>
+        <div><div class="gauge" aria-hidden="true"><i style="width:50%"></i><b></b></div></div>
+        <h3>보통이다</h3>
+        <p>특별한 관계가 없으면 그대로 들어갑니다. 상성표의 대부분이 여기에 속해요.</p>
+        <span class="cnt" data-v="1"></span>
+        <div class="say">(아무 메시지도 나오지 않는다)</div>
+      </article>
+      <article class="rule" style="--tone:var(--xh)">
+        <div class="mult-top"><span class="x">×½</span><span class="mult-name">절반</span></div>
+        <div><div class="gauge" aria-hidden="true"><i style="width:25%"></i><b></b></div></div>
         <h3>효과가 별로다</h3>
         <p>상대가 버티는 타입이면 절반. 같은 타입끼리는 대체로 반감입니다.</p>
-        <span class="say">“효과가 별로인 듯하다…”</span>
+        <span class="cnt" data-v="0.5"></span>
+        <div class="say">효과가 별로인 듯하다…</div>
       </article>
-      <article class="rule">
-        <div class="x">×0</div>
+      <article class="rule" style="--tone:var(--ink)">
+        <div class="mult-top"><span class="x">×0</span><span class="mult-name">무효</span></div>
+        <div><div class="gauge" aria-hidden="true"><i style="width:0"></i><b></b></div></div>
         <h3>효과가 없다</h3>
-        <p>아예 안 통하는 조합이 8가지 있습니다. 이건 따로 통째로 외워 두면 편합니다.</p>
-        <span class="say">“효과가 없는 것 같다…”</span>
+        <p>아예 안 통하는 조합. 배틀을 뒤집는 조합이라 따로 통째로 외워 두면 편합니다.</p>
+        <span class="cnt" data-v="0"></span>
+        <div class="say">효과가 없는 것 같다…</div>
       </article>
+    </div>
+    <div class="rules">
       <article class="rule wide">
         <h3>타입이 두 개면 곱한다</h3>
-        <p>복합 타입은 각 타입의 배율을 곱합니다. 그래서 ×4, ×¼도 나오고, 한쪽이 ×0이면 결과도 무조건 ×0입니다.</p>
-        <div class="eq" id="eqExample"></div>
+        <p>복합 타입 포켓몬은 두 타입의 배율을 곱합니다. 그래서 ×4나 ×¼도 나오고, 한쪽이 ×0이면 결과도 무조건 ×0입니다.</p>
+        <div class="fx-list" id="eqExample"></div>
       </article>
-      <article class="rule">
-        <div class="x" style="color:var(--accent)">×1.5</div>
+      <article class="rule" style="--tone:var(--accent)">
+        <div class="mult-top"><span class="x">×1.5</span><span class="mult-name">위력 보너스</span></div>
         <h3>자속 보정</h3>
-        <p>포켓몬이 자기 타입과 같은 기술을 쓰면 위력이 1.5배. 불꽃 포켓몬의 불꽃 기술이 더 아픈 이유입니다.</p>
+        <p>포켓몬이 자기 타입과 같은 기술을 쓰면 위력이 1.5배. 상성 배율과는 따로 한 번 더 곱해집니다.</p>
+        <div class="fx-list" id="stabEx"></div>
       </article>
-      <article class="rule wide" style="grid-column:1/-1">
+      <article class="rule full">
         <h3>공격과 방어는 따로 본다</h3>
-        <p>A가 B에게 강하다고 해서 B가 A에게 약한 건 아닙니다. 상성표는 한 방향으로만 읽어야 합니다.</p>
-        <div class="asym" id="asym"></div>
+        <p>A가 B에게 강하다고 해서 B가 A에게 약한 건 아닙니다. 상성은 항상 "어떤 기술로 어떤 포켓몬을 때리는지" 한 방향으로 읽어야 합니다.</p>
+        <div class="pairs" id="asym"></div>
       </article>
     </div>
   </section>
@@ -688,9 +732,22 @@ $('board').innerHTML=T.map(t=>`<button class="tile${t.l?' light':''}" style="${s
 $('board').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;setDex(b.dataset.k);$('dex').scrollIntoView()});
 
 // rules examples
-$('eqExample').innerHTML=`${chip('rock')} → ${chip('fire')}${chip('flying')} <span>= ×2 × ×2 =</span> <span class="tag" style="background:var(--x2);color:#fff">×4</span> <span style="width:100%;height:0"></span> ${chip('ground')} → ${chip('fire')}${chip('flying')} <span>= ×2 × ×0 =</span> <span class="tag" style="background:var(--x0);color:var(--x0-ink)">×0</span>`;
-const asymRows=[['steel','electric','electric','steel'],['ice','ground','ground','ice']];
-$('asym').innerHTML=asymRows.map(([a,d,a2,d2])=>{const v1=m(a,d),v2=m(a2,d2);return `<div>${chip(a)} → ${chip(d)} ${tag(v1)} <span style="color:var(--muted)">그런데</span> ${chip(a2)} → ${chip(d2)} ${tag(v2)}</div>`}).join('');
+const chipSm=k=>chip(k).replace('class="chip','class="chip sm');
+const tagLg=v=>tag(v).replace('class="tag"','class="tag lg"');
+document.querySelectorAll('.cnt[data-v]').forEach(el=>{const want=+el.dataset.v;let n=0;T.forEach(a=>T.forEach(d=>{if(m(a.k,d.k)===want)n++}));el.innerHTML=`324개 조합 중 <b>${n}개</b>`});
+function fxBlock(atk,mon,types){const parts=types.map(t=>m(atk,t)),v=parts.reduce((a,b)=>a*b,1);
+  return `<div class="fx"><div class="fx-cap"><b>${mon}</b>(${types.map(t=>byK[t].n).join('·')})에게 <b>${byK[atk].n}</b> 기술을 쓰면</div><div class="fx-row">
+  <div class="fx-cell"><span class="fx-lab">기술</span>${chipSm(atk)}</div><span class="fx-op" aria-hidden="true">→</span>
+  ${types.map((t,i)=>`${i?'<span class="fx-op" aria-label="곱하기">×</span>':''}<div class="fx-cell"><span class="fx-lab">${i+1}번 타입</span>${chipSm(t)}${tag(parts[i])}</div>`).join('')}
+  <span class="fx-op" aria-hidden="true">=</span><div class="fx-cell fx-res"><span class="fx-lab">결과</span>${tagLg(v)}</div></div></div>`}
+$('eqExample').innerHTML=fxBlock('rock','리자몽',['fire','flying'])+fxBlock('ground','리자몽',['fire','flying']);
+$('stabEx').innerHTML=`<div class="fx"><div class="fx-cap"><b>리자몽</b>이 불꽃 기술을 쓰면</div><div class="fx-row">
+  <div class="fx-cell"><span class="fx-lab">포켓몬</span>${chipSm('fire')}</div><span class="fx-op" aria-hidden="true">+</span>
+  <div class="fx-cell"><span class="fx-lab">기술</span>${chipSm('fire')}</div><span class="fx-op" aria-hidden="true">=</span>
+  <div class="fx-cell fx-res"><span class="fx-lab">위력</span><span class="tag lg" style="background:var(--accent);color:var(--accent-ink)">×1.5</span></div></div></div>`;
+const asymRows=[['steel','electric','쇠로 전류를 치면 감전돼 힘이 빠지지만, 전기가 쇠를 부수지는 못합니다.'],['ice','ground','얼음은 땅을 꽁꽁 얼려 버리지만, 땅으로 얼음을 치는 건 평범한 공격입니다.']];
+const hitRow=(a,d)=>`<div class="pair-row"><span class="s">${chipSm(a)} 기술로 ${chipSm(d)} 포켓몬을 때리면</span>${tag(m(a,d))}</div>`;
+$('asym').innerHTML=asymRows.map(([a,d,why])=>`<div class="pair">${hitRow(a,d)}${hitRow(d,a)}<p class="why">${why}</p></div>`).join('');
 function fmt(v){return v===.5?'×½':v===.25?'×¼':'×'+(+v.toFixed(2))}
 function tag(v){const bg=v>=2?'var(--x2)':v===0?'var(--x0)':v<1?'var(--xh)':'var(--surface-2)';const fg=v===1?'var(--ink)':v===0?'var(--x0-ink)':'#fff';return `<span class="tag" style="background:${bg};color:${fg}">${fmt(v)}</span>`}
 
